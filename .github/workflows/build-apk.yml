@@ -1,0 +1,36 @@
+   name: Build APK
+   on:
+     push:
+       branches: [ "**" ]
+     workflow_dispatch:
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - name: Checkout
+           uses: actions/checkout@v4
+         - name: Set up JDK 17
+           uses: actions/setup-java@v4
+           with:
+             distribution: temurin
+             java-version: "17"
+         - name: Set up Gradle 8.7
+           uses: gradle/actions/setup-gradle@v4
+           with:
+             gradle-version: "8.7"
+         - name: Accept Android SDK licenses
+           run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+         - name: Locate the Gradle project
+           id: proj
+           run: |
+             FILE=$(find . -maxdepth 4 -name settings.gradle.kts | head -n1)
+             echo "dir=$(dirname "$FILE")" >> "$GITHUB_OUTPUT"
+         - name: Build debug APK
+           working-directory: ${{ steps.proj.outputs.dir }}
+           run: gradle assembleDebug --no-daemon --stacktrace
+         - name: Upload APK
+           uses: actions/upload-artifact@v4
+           with:
+             name: Approach-debug-apk
+             path: "**/build/outputs/apk/debug/*.apk"
+             if-no-files-found: error
