@@ -1,0 +1,93 @@
+# Approach — Android build & submit guide
+
+A complete Android Studio project that wraps the **Approach** ATC game in a native app: a Kotlin
+`Activity` hosting a `WebView` that loads the game fully offline from app assets (DOM storage is
+enabled, so the in-game **save/resume** works).
+
+Good news: unlike the iOS path, **you don't need a Mac**. Android Studio runs on Windows, Linux,
+and macOS, and a Google Play developer account is a **one-time $25** (not $99/year).
+
+---
+
+## A. Play it right now on Android (no build, free)
+
+1. Put `atc-approach-control.html` on your phone (AirDrop-equivalent, email, USB, or any web host)
+   and open it in **Chrome**.
+2. Chrome menu (⋮) → **Add to Home screen** / **Install app**.
+3. Launch from the home screen — it runs fullscreen and offline, with auto-save working.
+
+(The game ships with an embedded icon + web manifest, so the shortcut looks and behaves like an app.)
+
+---
+
+## B. Get a real APK with NO tools installed (cloud build via GitHub) — recommended
+
+This project includes a ready-made GitHub Actions workflow (`.github/workflows/build-apk.yml`)
+that compiles a signed, installable **debug APK** in the cloud. You install nothing locally.
+
+1. Make a free **GitHub** account and create a new repository (empty, can be private).
+2. Upload this project so that **`settings.gradle.kts` sits at the repository root**:
+   - Easiest: on the new repo page choose **uploading an existing file**, then drag in the
+     *contents* of this `Approach` folder (the `app/` folder, `settings.gradle.kts`,
+     `build.gradle.kts`, the `.github` folder, etc.) — **not** the `Approach` folder itself.
+   - The hidden `.github` folder must end up at the top level; that's what triggers the build.
+3. The build starts automatically on push. Open the repo's **Actions** tab → the latest
+   **Build APK** run → scroll to **Artifacts** → download **Approach-debug-apk**.
+4. Unzip it on your phone, open `app-debug.apk`, and tap install
+   (allow "install unknown apps" for your browser/files app when prompted).
+
+You can re-run it any time from **Actions → Build APK → Run workflow**. Every push rebuilds.
+
+> Note: a *debug* APK is fully installable for personal use/sideloading. For the **Play Store**
+> you need a *release* AAB signed with your own key — see "Publish to Google Play" under section C.
+
+---
+
+## C. Build locally in Android Studio (no Mac needed)
+
+### What you'll need
+- **Android Studio** (free — Windows / Linux / macOS). It bundles the right JDK and Gradle.
+- For Google Play: a **Google Play Console** account (**one-time $25**). Not needed to test on your own device.
+
+### Open & run
+1. Copy this whole `Approach` folder to your computer.
+2. In Android Studio: **Open** → select the `Approach` folder. Let it **Gradle Sync**
+   (it downloads the Android Gradle Plugin / Gradle wrapper automatically on first sync).
+3. Plug in an Android phone with **USB debugging** on (or start an emulator).
+4. Press **▶ Run**. The game builds and launches.
+
+### Make an installable APK (sideload / share)
+- **Build → Build Bundle(s) / APK(s) → Build APK(s)**. The APK lands in
+  `app/build/outputs/apk/debug/`. For a shareable release APK, create a release build with a
+  signing key (next section) and use **Build APK(s)** on the release variant.
+
+### Publish to Google Play
+1. Change `applicationId` in `app/build.gradle.kts` from `com.example.approach` to your own
+   unique id (e.g. `com.yourname.approach`).
+2. **Build → Generate Signed Bundle / APK → Android App Bundle (.aab)**. Create a new **keystore**
+   when prompted and keep it safe — you need it for every future update.
+3. In the [Google Play Console](https://play.google.com/console): create an app, complete the
+   store listing, content rating, and data-safety form (**this app collects no data** — declare that),
+   then upload the `.aab` and roll out.
+
+---
+
+## What's inside
+- `app/src/main/java/com/example/approach/MainActivity.kt` — the WebView host (offline, fullscreen, DOM storage on).
+- `app/src/main/assets/game.html` — the entire game (identical to `atc-approach-control.html`).
+- `app/src/main/AndroidManifest.xml` — launcher activity, fullscreen, rotation handled without reload, **no permissions** (fully offline).
+- `app/src/main/res/` — adaptive launcher icon (radar scope), colors, theme.
+- `app/build.gradle.kts`, `build.gradle.kts`, `settings.gradle.kts` — Gradle config (Kotlin DSL).
+- `.github/workflows/build-apk.yml` — cloud build that produces an installable APK on every push (section B).
+
+## Updating the game later
+Replace `app/src/main/assets/game.html` with a newer copy of the HTML and rebuild. Nothing else changes.
+
+## Notes
+- `minSdk = 24` (Android 7.0) → runs on ~99% of active devices. `compileSdk`/`targetSdk = 34`.
+- Versions in the Gradle files (AGP 8.5.2 / Gradle 8.7 / Kotlin 1.9.24) are stable; if Android Studio
+  prompts to upgrade, accept via its **AGP Upgrade Assistant**.
+- The `gradle/wrapper/gradle-wrapper.jar` and `gradlew` scripts are generated by Android Studio on first
+  open. If you build from the command line instead, run `gradle wrapper` once in the project folder first.
+- The heading font (Chakra Petch) loads from the web when online and falls back to a system font offline;
+  the main UI font (IBM Plex Mono) is embedded, so the app looks right with no network and no permissions.
