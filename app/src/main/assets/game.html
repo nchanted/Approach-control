@@ -67,14 +67,33 @@ header{
 .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--phos);box-shadow:0 0 10px var(--phos);animation:blip 2s infinite;}
 @keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
 .hud{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;align-items:center;}
-.stat{background:#1a3148;border:1px solid var(--line);border-radius:6px;padding:4px 10px;min-width:64px;text-align:center;}
+.stat{background:#1a3148;border:1px solid var(--line);border-radius:6px;padding:4px 10px;min-width:64px;text-align:center;display:flex;flex-direction:column;justify-content:flex-start;}
+.stat.level{min-width:104px;}
 .stat .k{font-size:9px;color:var(--ink-dim);letter-spacing:.12em;text-transform:uppercase;}
-.stat .v{font-family:"Chakra Petch","Bahnschrift","Segoe UI Semibold",system-ui,sans-serif;font-weight:700;font-size:17px;color:var(--ink);}
+.stat .v{font-family:"Chakra Petch","Bahnschrift","Segoe UI Semibold",system-ui,sans-serif;font-weight:700;font-size:17px;color:var(--ink);line-height:1.1;}
 .stat .v.warn{color:var(--amber)} .stat .v.bad{color:var(--red)}
+.stat .rank{font-size:8.5px;color:var(--cyan);letter-spacing:.03em;margin-top:1px;white-space:nowrap;text-transform:uppercase;opacity:.85;max-width:120px;overflow:hidden;text-overflow:ellipsis;}
 .strikes{display:flex;gap:4px;font-size:16px;}
 .savedpip{font-family:"Chakra Petch";font-size:10px;letter-spacing:.1em;color:var(--phos);
   opacity:0;transition:opacity .25s;white-space:nowrap;}
 .savedpip.on{opacity:.9;}
+.buildbtn{background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0;color:#eaffff;}
+.buildbtn:hover{border-color:var(--cyan);box-shadow:0 0 14px #4db8ff44;color:#fff;}
+.buildbtn.afford{animation:buildpulse 1.6s ease-in-out infinite;}
+@keyframes buildpulse{0%,100%{box-shadow:0 0 0 #0000}50%{box-shadow:0 0 12px #5ce0d8aa}}
+.shopcard{max-width:600px;}
+.shoplist-empty{color:var(--ink-dim);text-align:center;padding:14px;font-size:12px;}
+.shopitem{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);
+  border-radius:8px;background:#12273f;margin:8px 0;}
+.shopitem .info{flex:1;min-width:0;}
+.shopitem .nm{font-family:"Chakra Petch","Bahnschrift",system-ui,sans-serif;font-weight:600;font-size:14px;color:#dbecff;}
+.shopitem .ds{font-size:11px;color:var(--ink-dim);margin-top:2px;line-height:1.35;}
+.shopitem .buy{font-family:"Chakra Petch";font-weight:700;font-size:13px;padding:9px 12px;border-radius:7px;
+  border:1px solid #3a8ad0;background:#1d5a8c;color:#eaffff;cursor:pointer;white-space:nowrap;flex:0 0 auto;}
+.shopitem .buy:hover:not(:disabled){border-color:var(--cyan);box-shadow:0 0 12px #4db8ff55;}
+.shopitem .buy:disabled{opacity:.4;cursor:not-allowed;}
+.shopitem.owned{opacity:.62;}
+.shopitem .owned-tag{font-family:"Chakra Petch";font-weight:700;font-size:12px;color:var(--phos);flex:0 0 auto;}
 .btn{font-family:"Chakra Petch","Bahnschrift","Segoe UI Semibold",system-ui,sans-serif;font-weight:600;cursor:pointer;border-radius:7px;
   border:1px solid var(--line);background:#1d3a5c;color:var(--ink);padding:7px 12px;letter-spacing:.06em;}
 .btn:hover{border-color:var(--phos);color:var(--phos);}
@@ -175,7 +194,7 @@ main{flex:1;display:flex;min-height:0;}
   border-color:#3a8ad0;color:#dfffee;box-shadow:0 0 18px #1f6aa840;}
 .execute:hover{box-shadow:0 0 26px #4db8ff55;border-color:var(--phos)}
 .execute:disabled{opacity:.4;box-shadow:none}
-.log{height:74px;overflow-y:auto;-webkit-overflow-scrolling:touch;font-size:11px;padding:6px 12px;padding-bottom:max(6px, env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#0e2236;color:var(--ink-dim);}
+.log{height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;font-size:11px;line-height:1.45;padding:7px 12px;padding-bottom:max(7px, env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#0e2236;color:var(--ink-dim);}
 .log p{margin:1px 0;}
 .log .ok{color:var(--phos)} .log .warn{color:var(--amber)} .log .bad{color:var(--red)} .log .sys{color:var(--cyan)}
 
@@ -205,7 +224,7 @@ main{flex:1;display:flex;min-height:0;}
   .side{width:auto;border-left:none;border-top:1px solid var(--line);flex:1;min-height:0}
   .strips{flex-direction:column;flex-wrap:nowrap;overflow-y:auto;overflow-x:hidden}
   .strip{min-width:0}
-  .log{height:46px}
+  .log{height:80px}
   header{padding:6px 12px;padding-top:max(6px,env(safe-area-inset-top));gap:8px}
   .logo{font-size:15px}
   .stat{min-width:50px;padding:3px 7px}
@@ -242,7 +261,7 @@ main{flex:1;display:flex;min-height:0;}
   .cs{font-size:13px}
   .controls{padding:6px 8px}
   .execute{font-size:13px;padding:9px}
-  .log{height:34px;padding:3px 10px}
+  .log{height:56px;padding:3px 10px}
   .mk .tag{font-size:8px;padding:1px 3px}
   .mk .glyph svg{width:19px;height:19px}
   .acts{margin-top:5px}
@@ -270,10 +289,12 @@ main{flex:1;display:flex;min-height:0;}
     <div class="logo"><span class="dot"></span>APPROACH<span style="color:var(--ink-dim);font-weight:500">·CTL</span></div>
     <div class="hud">
       <div class="stat"><div class="k">Time</div><div class="v" id="clock">06:00</div></div>
-      <div class="stat"><div class="k">Level</div><div class="v" id="level">1</div></div>
+      <div class="stat level"><div class="k">Level</div><div class="v" id="level">1</div><div class="rank" id="rank">Trainee</div></div>
       <div class="stat"><div class="k">Cleared</div><div class="v" id="ops">0/6</div></div>
+      <div class="stat"><div class="k">Funds</div><div class="v" id="funds" style="color:var(--cyan)">$0</div></div>
       <div class="stat"><div class="k">Score</div><div class="v" id="score">0</div></div>
       <div class="stat"><div class="k">Strikes</div><div class="v strikes" id="strikes"></div></div>
+      <button class="btn buildbtn" id="build" title="Build &amp; upgrade the airport">✦ BUILD</button>
       <span class="savedpip" id="saved" title="Auto-saved">● SAVED</span>
       <button class="btn iconbtn" id="sound" title="Toggle sound">🔊</button>
       <button class="btn iconbtn" id="help" title="Briefing">?</button>
@@ -310,9 +331,10 @@ main{flex:1;display:flex;min-height:0;}
       <li><b>Select</b> a flight strip → choose a runway button (or <b>HOLD</b>).</li>
       <li>Arrivals burn <b>1 fuel per turn</b> — the gauge reads how many <b>turns</b> of fuel remain. Hit zero in the air = crash + a strike.</li>
       <li>One aircraft per runway per turn. <b>14/32</b> physically crosses <b>27L/09R</b> — you can't run both at once.</li>
-      <li><b>Heavies</b> (777, A350, 747…) need a <b>long runway</b> — you now have two (<b>27R/09L</b> and <b>27C/09C</b>) — and leave <b>wake turbulence</b>, blocking that runway the next turn. The <b>A380 Super</b> blocks it for two.</li>
+      <li><b>Heavies</b> (widebodies) need a <b>long runway</b> — you now have two (<b>27R/09L</b> and <b>27C/09C</b>) — and leave <b>wake turbulence</b>, blocking that runway the next turn. The <b>Superjumbo</b> blocks it for two.</li>
       <li>Watch for <b>weather closures</b> and <b>fuel / medical emergencies</b> as levels climb.</li>
       <li>Every wave is <b>always landable</b> with the right order — the pressure is finding it before fuel runs out.</li>
+      <li>You start with <b>one runway</b>. Each operation earns <b>funds</b> — tap <b>✦ BUILD</b> to open new runways, extend them for heavies, add rapid-exit taxiways, ILS, terminals and more. More capacity means more traffic and more income.</li>
       <li>Three strikes and you're relieved of duty. Your shift <b>auto-saves</b> each turn.</li>
     </ul>
     <button class="btn go" id="resumebtn" style="display:none;background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0">▶ RESUME SHIFT</button>
@@ -335,6 +357,16 @@ main{flex:1;display:flex;min-height:0;}
   </div>
 </div>
 
+<!-- AIRPORT BUILD / UPGRADE SHOP -->
+<div class="overlay hidden" id="shop">
+  <div class="card shopcard">
+    <h1 style="font-size:24px">Airport Operations</h1>
+    <div class="sub" id="shopfunds">Funds available: $0</div>
+    <div id="shoplist"></div>
+    <button class="btn go" id="shopclose" style="background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0">CLOSE ▶</button>
+  </div>
+</div>
+
 <script>
 "use strict";
 /* ---------- helpers ---------- */
@@ -353,26 +385,34 @@ function sDel(k){ try{localStorage.removeItem(k);}catch(e){delete _mem[k];} }
 function saveGame(){
   if(!G||G.over) return;
   try{
-    const data={ v:1, ts:Date.now(),
+    const data={ v:2, ts:Date.now(),
       G:{ level:G.level, turn:G.turn, score:G.score, strikes:G.strikes, maxStrikes:G.maxStrikes,
           opsLevel:G.opsLevel, opsTarget:G.opsTarget, handled:G.handled, clockMin:G.clockMin, seq:G.seq,
+          money:G.money, up:G.up,
           planes:G.planes.filter(p=>p.status!=="crash").map(p=>{ const c={...p}; delete c._to; delete c._heading; c.status="active"; c.assigned=null; return c; }),
           log:G.log.slice(0,14) },
-      rwy:RWY.map(r=>({id:r.id, closedFor:r.closedFor||0, wakeFor:r.wakeFor||0})) };
+      rwy:RWY.map(r=>({id:r.id, open:!!r.open, long:!!r.long, closedFor:r.closedFor||0, wakeFor:r.wakeFor||0})) };
     sSet(SAVE_KEY, JSON.stringify(data));
     flashSaved();
   }catch(e){}
 }
-function readSave(){ const raw=sGet(SAVE_KEY); if(!raw) return null; try{ const d=JSON.parse(raw); return (d&&d.v===1&&d.G)?d:null; }catch(e){ return null; } }
+function readSave(){ const raw=sGet(SAVE_KEY); if(!raw) return null; try{ const d=JSON.parse(raw); return (d&&d.v>=1&&d.G)?d:null; }catch(e){ return null; } }
 function hasSave(){ return !!readSave(); }
 function clearSave(){ sDel(SAVE_KEY); }
 function loadGame(){
   const d=readSave(); if(!d) return false;
-  fresh();                                   // init structures + RWY designators
+  fresh();                                   // init structures + RWY designators + defaults
   Object.assign(G, d.G);
+  if(!G.up) G.up={};
+  G.up=Object.assign({rapidExit:0,ils:false,terminal:0,slots:0,revenue:0,catiii:false,hangar:0}, G.up);
+  if(G.up.rapidExit===true) G.up.rapidExit=1;   // migrate older boolean saves
+  if(typeof G.money!=="number") G.money=250;
   G.over=false; G.busy=false; G.sel=null;
   G.log = d.G.log || [];
-  RWY.forEach(r=>{ const sr=(d.rwy||[]).find(x=>x.id===r.id); r.closedFor=sr?sr.closedFor:0; r.wakeFor=sr?sr.wakeFor:0; });
+  RWY.forEach(r=>{ const sr=(d.rwy||[]).find(x=>x.id===r.id);
+    r.closedFor=sr?sr.closedFor:0; r.wakeFor=sr?sr.wakeFor:0;
+    r.open = sr ? (sr.open!==undefined?sr.open:true) : (r.id==="A");   // v1 saves had all runways open
+    r.long = sr&&sr.long!==undefined ? sr.long : r.baseLong; });
   Object.keys(markerEls).forEach(id=>{ markerEls[id].remove(); delete markerEls[id]; });
   return true;
 }
@@ -400,12 +440,13 @@ const sfx={click:()=>beep(520,.05,"square",.04),assign:()=>beep(720,.07,"triangl
   alarm:()=>{beep(220,.25,"square",.07);},
   level:()=>{[523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,.16,"triangle",.06),i*120));}};
 
-/* ---------- runway layout (viewBox 1000x640) ---------- */
+/* ---------- runway layout (viewBox 1000x640) ----------
+   `open` and `long` are dynamic game state (set in fresh()); baseLong/cost drive the build economy. */
 const RWY=[
-  {id:"A",name:"",arr:"",dep:"",long:true,  ax:250,ay:150,bx:700,by:150, sufA:"L",sufB:"R"},
-  {id:"B",name:"",arr:"",dep:"",long:true,  ax:250,ay:280,bx:700,by:280, sufA:"C",sufB:"C"},
-  {id:"C",name:"",arr:"",dep:"",long:false, ax:250,ay:410,bx:700,by:410, sufA:"R",sufB:"L"},
-  {id:"D",name:"",arr:"",dep:"",long:false, ax:464,ay:295,bx:656,by:525, sufA:"",sufB:"", crosses:"C"},
+  {id:"A",name:"",arr:"",dep:"",baseLong:true, cost:0,    ax:250,ay:150,bx:700,by:150, sufA:"L",sufB:"R"},
+  {id:"B",name:"",arr:"",dep:"",baseLong:true, cost:400,  ax:250,ay:280,bx:700,by:280, sufA:"C",sufB:"C"},
+  {id:"C",name:"",arr:"",dep:"",baseLong:false,cost:700,  ax:250,ay:410,bx:700,by:410, sufA:"R",sufB:"L"},
+  {id:"D",name:"",arr:"",dep:"",baseLong:false,cost:1000, ax:464,ay:295,bx:656,by:525, sufA:"",sufB:"", crosses:"C"},
 ];
 // runway designator = magnetic heading / 10, from on-screen geometry (north = up).
 function bearingScreen(from,to){
@@ -423,31 +464,34 @@ const rwById=id=>RWY.find(r=>r.id===id);
 const mid=r=>({x:(r.ax+r.bx)/2,y:(r.ay+r.by)/2});
 
 /* ---------- airlines / types ---------- */
-const AIRLINE={DLH:"#ffcc00",BAW:"#2763d6",AFR:"#2e5bff",KLM:"#00a6e0",UAL:"#4b6ce0",
-  SWA:"#f4a300",RYR:"#f4d03f",EZY:"#ff6a1a",SAS:"#1e88e5",IBE:"#e0322b",
-  TAP:"#1fa85b",FIN:"#5aa0ff",AAL:"#d14b6a",DAL:"#e0394a",ACA:"#e84141"};
+// Fictional carriers (invented 3-letter codes + colors) — no real airline trademarks.
+const AIRLINE={SKY:"#ffcc00",NVA:"#2763d6",ATC:"#2e5bff",AZR:"#00a6e0",HLO:"#4b6ce0",
+  ORN:"#f4a300",VEC:"#f4d03f",MRD:"#ff6a1a",PLR:"#1e88e5",CRM:"#e0322b",
+  VRD:"#1fa85b",AUR:"#5aa0ff",FLC:"#d14b6a",RDS:"#e0394a",MPL:"#e84141"};
 const AIRLINE_CODES=Object.keys(AIRLINE);
-// Fleet grouped by wake-turbulence category. Each: c=ICAO type code, n=full name.
+// Fleet by wake-turbulence category. Generic/fictional model names + invented type codes
+// (no manufacturer or trademarked model names). Codes are arbitrary game identifiers.
 const FLEET={
-  LIGHT:[ {c:"E145",n:"Embraer ERJ-145"},{c:"CRJ9",n:"Bombardier CRJ900"},
-          {c:"AT76",n:"ATR 72-600"},     {c:"E75L",n:"Embraer E175"},
-          {c:"DH8D",n:"Dash 8 Q400"} ],
-  MEDIUM:[ {c:"A320",n:"Airbus A320"},    {c:"A319",n:"Airbus A319"},
-           {c:"A21N",n:"Airbus A321neo"}, {c:"B738",n:"Boeing 737-800"},
-           {c:"B38M",n:"Boeing 737 MAX 8"},{c:"E190",n:"Embraer E190"} ],
-  HEAVY:[ {c:"B77W",n:"Boeing 777-300ER"},{c:"A359",n:"Airbus A350-900"},
-          {c:"B789",n:"Boeing 787-9"},    {c:"B748",n:"Boeing 747-8I"},
-          {c:"A333",n:"Airbus A330-300"} ],
-  SUPER:[ {c:"A388",n:"Airbus A380-800"} ],
+  LIGHT:[ {c:"RJ45",n:"Regional Jet 45"}, {c:"RJ90",n:"Regional Jet 90"},
+          {c:"TP72",n:"Turboprop 72"},    {c:"RJ75",n:"Regional Jet 75"},
+          {c:"TP80",n:"Turboprop 80"} ],
+  MEDIUM:[ {c:"NJ20",n:"Narrowjet 200"},  {c:"NJ19",n:"Narrowjet 190"},
+           {c:"NJ21",n:"Narrowjet 210"},  {c:"NJ38",n:"Narrowjet 380"},
+           {c:"NJ8M",n:"Narrowjet Max"},  {c:"NJ90",n:"Narrowjet 90"} ],
+  HEAVY:[ {c:"WB77",n:"Widebody 770"},    {c:"WB35",n:"Widebody 350"},
+          {c:"WB78",n:"Widebody 780"},    {c:"WB74",n:"Widebody 740"},
+          {c:"WB33",n:"Widebody 330"} ],
+  SUPER:[ {c:"SJ88",n:"Superjumbo 880"} ],
 };
 // category -> {requiresLong, wakeTurns left on a runway after departure, glyph scale}
 const CAT={ LIGHT:{long:false,wake:0,scale:.78}, MEDIUM:{long:false,wake:0,scale:1},
             HEAVY:{long:true, wake:2,scale:1.28}, SUPER:{long:true, wake:3,scale:1.55} };
 function pickType(cfg,forceHeavy){
+  const heavyOK = hasOpenLong();   // can't dispatch a heavy if nowhere can land it
   let cat;
-  if(forceHeavy){ cat="HEAVY"; }
-  else if(cfg.heavy && G.level>=4 && chance(.05)) cat="SUPER";
-  else if(cfg.heavy && chance(.24)) cat="HEAVY";
+  if(forceHeavy && heavyOK){ cat="HEAVY"; }
+  else if(heavyOK && cfg.heavy && G.level>=4 && chance(.05)) cat="SUPER";
+  else if(heavyOK && cfg.heavy && chance(.24)) cat="HEAVY";
   else if(chance(.20)) cat="LIGHT";
   else cat="MEDIUM";
   const t=pick(FLEET[cat]);
@@ -457,15 +501,76 @@ function pickType(cfg,forceHeavy){
 /* ---------- game state ---------- */
 let G;
 function fresh(){
-  RWY.forEach(r=>{r.closedFor=0;r.wakeFor=0;});
+  // runway state resets: only the first runway is open; the rest are buildable plots.
+  RWY.forEach((r,i)=>{ r.closedFor=0; r.wakeFor=0; r.open=(r.id==="A"); r.long=r.baseLong; });
   G={level:1,turn:1,score:0,strikes:3,maxStrikes:3,opsLevel:0,opsTarget:6,
-     handled:0,clockMin:6*60,planes:[],sel:null,busy:false,over:false,seq:1,log:[]};
+     handled:0,clockMin:6*60,planes:[],sel:null,busy:false,over:false,seq:1,log:[],
+     money:250, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0}};
   // seed
   G.planes.push(mkPlane("ARR",{fuel:9}));
   G.planes.push(mkPlane("DEP",{}));
   G.planes.push(mkPlane("ARR",{fuel:11}));
-  logmsg("sys","── SHIFT START · "+RWY.map(r=>r.name).join("  ")+" ──");
+  logmsg("sys","── SHIFT START · single runway "+rwById("A").name+" · build out your airport ──");
 }
+
+// ---------- airport build economy ----------
+function openRunways(){ return RWY.filter(r=>r.open); }
+function hasOpenLong(){ return RWY.some(r=>r.open && r.long); }
+function earn(amount){ const a=Math.max(0,Math.round(amount)); G.money+=a; G.score+=a; }
+
+const UPGRADES=[
+  {id:"open-B", name:"Open Runway "+rwById("B").name, sub:"Second runway · full length",
+    cost:()=>rwById("B").cost, owned:()=>rwById("B").open, can:()=>!rwById("B").open,
+    buy:()=>{rwById("B").open=true;} },
+  {id:"open-C", name:"Open Runway "+rwById("C").name, sub:"Third runway · standard length",
+    cost:()=>rwById("C").cost, owned:()=>rwById("C").open, can:()=>!rwById("C").open,
+    buy:()=>{rwById("C").open=true;} },
+  {id:"open-D", name:"Open Runway "+rwById("D").name, sub:"Crossing runway (conflicts with "+rwById("C").name+")",
+    cost:()=>rwById("D").cost, owned:()=>rwById("D").open, can:()=>!rwById("D").open,
+    buy:()=>{rwById("D").open=true;} },
+  {id:"ext-C", name:"Extend "+rwById("C").name+" to long", sub:"Lets it accept heavies & superjumbos",
+    cost:()=>500, owned:()=>rwById("C").open&&rwById("C").long, can:()=>rwById("C").open&&!rwById("C").long,
+    buy:()=>{rwById("C").long=true;} },
+  {id:"ext-D", name:"Extend "+rwById("D").name+" to long", sub:"Lets it accept heavies & superjumbos",
+    cost:()=>500, owned:()=>rwById("D").open&&rwById("D").long, can:()=>rwById("D").open&&!rwById("D").long,
+    buy:()=>{rwById("D").long=true;} },
+  {id:"rapid", name:"Rapid-Exit Taxiways", sub:"Heavies clear faster — wake blocks one turn less",
+    cost:()=>800+ (G.up.rapidExit||0)*900, owned:()=>(G.up.rapidExit||0)>=2, can:()=>(G.up.rapidExit||0)<2,
+    buy:()=>{G.up.rapidExit=(G.up.rapidExit||0)+1;} },
+  {id:"ils", name:"ILS / Approach Lighting", sub:"Arrivals inbound with more fuel margin",
+    cost:()=>600, owned:()=>G.up.ils, can:()=>!G.up.ils,
+    buy:()=>{G.up.ils=true;} },
+  {id:"term", name:"Terminal Expansion", sub:"Handle more aircraft at once (+4 capacity)",
+    cost:()=>400+G.up.terminal*350, owned:()=>G.up.terminal>=4, can:()=>G.up.terminal<4,
+    buy:()=>{G.up.terminal++;} },
+  {id:"rescue", name:"Fire & Rescue Service", sub:"+1 strike — survive one more incident",
+    cost:()=>900, owned:()=>G.maxStrikes>=5, can:()=>G.maxStrikes<5,
+    buy:()=>{G.maxStrikes++; G.strikes++;} },
+
+  // ----- LATE-GAME TIER: expensive, several repeatable, meaningful deep into a run -----
+  {id:"slots", name:"Parallel Approach Capacity", sub:"Independent simultaneous approaches — land one extra aircraft every turn",
+    cost:()=>2500+ (G.up.slots||0)*2500, owned:()=>(G.up.slots||0)>=3, can:()=>(G.up.slots||0)<3 && openRunways().length>=2,
+    buy:()=>{G.up.slots=(G.up.slots||0)+1;} },
+  {id:"revenue", name:"Commercial Concessions", sub:"Retail, lounges & parking — passive income every turn",
+    cost:()=>1800+ (G.up.revenue||0)*1600, owned:()=>(G.up.revenue||0)>=4, can:()=>(G.up.revenue||0)<4,
+    buy:()=>{G.up.revenue=(G.up.revenue||0)+1;} },
+  {id:"catiii", name:"CAT III Flow Management", sub:"All-weather sequencing — extra fuel margin, stacks with ILS",
+    cost:()=>2200, owned:()=>G.up.catiii, can:()=>!!G.up.ils && !G.up.catiii,
+    buy:()=>{G.up.catiii=true;} },
+  {id:"hangar", name:"Maintenance Hangars", sub:"Overnight servicing — +1 strike beyond the standard limit",
+    cost:()=>2000+ (G.up.hangar||0)*1500, owned:()=>(G.up.hangar||0)>=2, can:()=>G.maxStrikes>=5 && (G.up.hangar||0)<2,
+    buy:()=>{G.up.hangar=(G.up.hangar||0)+1; G.maxStrikes++; G.strikes++;} },
+];
+function buyUpgrade(id){
+  if(G.busy) return;
+  const u=UPGRADES.find(x=>x.id===id); if(!u||!u.can()) return;
+  const c=u.cost(); if(G.money<c) return;
+  G.money-=c; u.buy();
+  logmsg("ok","✦ BUILT: "+u.name+" (−$"+c+")"); sfx.level();
+  saveGame(); renderShop(); render();
+}
+function wakeTurns(p){ return Math.max(0, (p.wake||0) - (G.up.rapidExit||0)); }
+function extraLandSlots(){ return (G.up&&G.up.slots)||0; }   // simultaneous-approach slots beyond physical runways
 
 function levelCfg(L){
   const tbl={1:[0,1],2:[1,1],3:[1,2],4:[1,2],5:[2,2],6:[2,3],7:[2,3]};
@@ -474,9 +579,16 @@ function levelCfg(L){
     spawnMin:sp[0], spawnMax:sp[1],
     fuelMin:Math.max(3,10-L), fuelMax:Math.max(5,13-L),
     heavy:L>=2, weather:L>=3, emerg:L>=3,
-    maxPlanes:6+L
+    maxPlanes:6+L+((typeof G!=='undefined'&&G&&G.up)?G.up.terminal*4:0)
   };
 }
+
+// named controller ranks earned per level (real ATC career-style progression)
+const RANKS=["Trainee","Ground Controller","Tower Controller","Approach Controller",
+  "Departure Controller","Radar Controller","Terminal Lead","Watch Supervisor",
+  "Senior Controller","Operations Manager","Centre Chief","Flight Director","Air Marshal"];
+function rankFor(L){ return RANKS[Math.min(L,RANKS.length)-1] || RANKS[RANKS.length-1]; }
+
 
 /* ---------- feasibility: can every airborne arrival still be landed in time? ----------
    Runway throughput per turn: the two long runways (A,B) are independent; the crossing pair
@@ -484,10 +596,12 @@ function levelCfg(L){
    We play a concrete EDF schedule; if it drains the board with nobody hitting empty, a
    solution provably exists. (A pessimistic result only makes spawned fuel more generous.) */
 function rwySimState(){
-  return RWY.map(r=>({long:!!r.long, closed:r.closedFor||0, wake:r.wakeFor||0}));
+  return openRunways().map(r=>({long:!!r.long, closed:r.closedFor||0, wake:r.wakeFor||0}));
 }
 function canDrain(arrivals, rwy){
-  let planes=arrivals.map(p=>({fuel:p.fuel, long:!!p.requiresLong, wake:p.wake||0}));
+  const wcut=(G&&G.up&&G.up.rapidExit)||0;
+  const extra=(G&&G.up&&G.up.slots)||0;     // parallel-approach slots beyond physical runways
+  let planes=arrivals.map(p=>({fuel:p.fuel, long:!!p.requiresLong, wake:Math.max(0,(p.wake||0)-wcut)}));
   let rw=rwy.map(r=>({...r}));
   let guard=0;
   while(planes.length){
@@ -507,6 +621,8 @@ function canDrain(arrivals, rwy){
         else if(li<longPool.length){ const r=longPool[li++]; if(pl.wake>0)r.wake=pl.wake; landed.add(i); }
       }
     }
+    // parallel-approach capacity: land up to `extra` more of the most-urgent remaining arrivals
+    if(extra>0){ let used=0; for(let i=0;i<planes.length && used<extra;i++){ if(!landed.has(i)){ landed.add(i); used++; } } }
     const next=[];
     for(let i=0;i<planes.length;i++){
       if(landed.has(i)) continue;
@@ -534,7 +650,7 @@ function finalizeArrivalFuel(p, level){
   const mf=minFeasibleFuel(p, 24);
   if(!isFinite(mf)) return false;
   if(p.emerg){ p.fuel=mf; }                              // emergencies = tightest solvable
-  else { const extra=Math.max(1, 8-level); p.fuel=mf+ri(0,extra); }  // headroom shrinks with level
+  else { const extra=Math.max(1, 8-level)+((G.up&&G.up.ils)?2:0)+((G.up&&G.up.catiii)?2:0); p.fuel=mf+ri(0,extra); }  // headroom shrinks with level; ILS + CAT III add margin
   p.maxfuel=Math.max(p.fuel,10);
   return true;
 }
@@ -569,11 +685,20 @@ function activeRunways(except){
   return s;
 }
 function runwayState(r,plane){
+  if(!r.open)       return {ok:false,why:"—"};
   if(r.closedFor>0) return {ok:false,why:"CLSD"};
   if(r.wakeFor>0)   return {ok:false,why:"WAKE"};
   if(plane.requiresLong && !r.long) return {ok:false,why:"SHORT"};
   const act=activeRunways(plane);
-  if(act.has(r.id)) return {ok:false,why:"OCC"};
+  if(act.has(r.id)){
+    // Parallel-approach capacity lets ARRIVALS pair onto an already-used runway,
+    // up to the number of extra slots bought (shared across the airport).
+    const slots=extraLandSlots();
+    const counts={}; let extraUsed=0;
+    G.planes.forEach(p=>{ if(p.assigned&&p!==plane){ counts[p.assigned]=(counts[p.assigned]||0)+1; } });
+    Object.values(counts).forEach(c=>{ if(c>1) extraUsed+=c-1; });
+    if(!(plane.kind==="ARR" && slots>0 && extraUsed<slots)) return {ok:false,why:"OCC"};
+  }
   // crossing conflict
   if(r.crosses && act.has(r.crosses)) return {ok:false,why:"X-"+rwById(r.crosses).arr.slice(0,3)};
   for(const o of RWY){ if(o.crosses===r.id && act.has(o.id)) return {ok:false,why:"X-"+o.arr}; }
@@ -607,13 +732,14 @@ function execute(){
     p.status="cleared";
     p._to=mid(r);
     p._heading = p.kind==="ARR"?180:300;
-    if(p.wake>0) r.wakeFor=p.wake; // heavies/supers leave wake turbulence
-    // scoring
+    if(p.wake>0) r.wakeFor=wakeTurns(p); // heavies/supers leave wake (rapid-exit taxiways reduce it)
+    // reward: points (lifetime score) + money (wallet) — same amount to both
     let pts = p.kind==="ARR"?100:80;
     if(p.kind==="ARR") pts += p.fuel*4;            // reward early landings
     if(p.kind==="DEP") pts -= Math.min(p.waited*5,40);
     if(p.emerg) pts += 220;
-    G.score=Math.max(0,G.score+pts);
+    pts=Math.max(5,pts);
+    earn(pts);
     G.opsLevel++; G.handled++;
   });
   if(any){ sfx.land(); } 
@@ -642,7 +768,7 @@ function finalize(){
   // weather — only close a runway if the board stays drainable afterward
   const cfg=levelCfg(G.level);
   if(cfg.weather && chance(.16)){
-    const open=RWY.filter(r=>r.closedFor===0 && r.wakeFor===0);
+    const open=RWY.filter(r=>r.open && r.closedFor===0 && r.wakeFor===0);
     if(open.length>1){
       const r=pick(open); const dur=ri(2,3); r.closedFor=dur;
       const arr=activeArrivals().map(p=>({fuel:p.fuel,requiresLong:p.requiresLong,wake:p.wake}));
@@ -653,11 +779,13 @@ function finalize(){
   }
   // advance time + spawn
   G.turn++; G.clockMin=(G.clockMin+ri(3,5))%(24*60);
+  // commercial concessions: passive per-turn income scaling with terminals in operation
+  if(G.up.revenue>0){ const inc=G.up.revenue*(35+openRunways().length*15); earn(inc); }
   spawn(cfg);
   // level up
   if(G.opsLevel>=G.opsTarget){
-    G.level++; G.score+=500; G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
-    logmsg("sys","▲ LEVEL "+G.level+" — traffic increasing (+500)"); sfx.level();
+    G.level++; earn(300); G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
+    logmsg("sys","▲ PROMOTED to "+rankFor(G.level)+" — Level "+G.level+" (+$300)"); sfx.level();
   }
   // game over?
   if(G.strikes<=0){ G.over=true; clearSave(); render(); return gameOver("strikes"); }
@@ -669,17 +797,27 @@ function spawn(cfg){
   let n=ri(cfg.spawnMin,cfg.spawnMax);
   const room=cfg.maxPlanes-G.planes.length;
   n=Math.min(n,Math.max(0,room));
-  let emergUsed=false;
-  for(let i=0;i<n;i++){
-    const kind = chance(.55)?"ARR":"DEP";
+  let emergUsed=false, added=0;
+  const tryAdd=(kind)=>{
+    if(G.planes.length>=cfg.maxPlanes) return false;
     const p=mkPlane(kind,{});
-    if(kind==="DEP"){ G.planes.push(p); continue; }     // departures never run out of fuel
+    if(p.kind==="DEP"){ G.planes.push(p); return true; }     // departures never run out of fuel
     if(p.emerg){ if(emergUsed){p.emerg=null; p.requiresLong=p._typeLong;} else emergUsed=true; }
-    // assign the tightest fuel that still leaves the entire board landable; skip if board is full
-    if(!finalizeArrivalFuel(p, G.level)) continue;
+    if(!finalizeArrivalFuel(p, G.level)) return false;       // board full → can't take an arrival
     G.planes.push(p);
     if(p.emerg) logmsg("bad","⚑ "+p.callsign+" declaring "+(p.emerg==="FUEL"?"MINIMUM FUEL":"MEDICAL")+" — priority!");
-  }
+    return true;
+  };
+  for(let i=0;i<n;i++){ if(tryAdd(chance(.55)?"ARR":"DEP")) added++; }
+  // Board-occupancy floor scales with level so the player always has room to clear the queue:
+  //  L1–3: floor 0 (you can fully empty the board and breathe)
+  //  L4+ : a rising minimum keeps the pressure on, capped below maxPlanes so it's always clearable.
+  const floor = Math.min(Math.max(0, G.level-3), cfg.maxPlanes-2);
+  let guard=0;
+  while(G.planes.length<floor && guard++<8){ if(!tryAdd(chance(.6)?"ARR":"DEP")) break; }
+  // Anti-stall: if nothing at all is in play (e.g. an empty roll on a quiet level), make sure at
+  // least one aircraft appears within the next turn or two so the game never sits idle.
+  if(G.planes.length===0 && added===0 && chance(.7)) tryAdd(chance(.6)?"ARR":"DEP");
 }
 
 /* ---------- layout for markers ---------- */
@@ -704,19 +842,40 @@ function layout(){
 function drawTaxiways(){
   const tw=pts=>{
     const dpath="M"+pts.map(p=>p.x+" "+p.y).join(" L ");
-    return `<path d="${dpath}" fill="none" stroke="#333c49" stroke-width="13" stroke-linejoin="round" stroke-linecap="round"/>`
-         + `<path d="${dpath}" fill="none" stroke="#caa83a" stroke-width="1.4" stroke-dasharray="7 8" opacity="0.7" stroke-linejoin="round" stroke-linecap="round"/>`;
+    return `<path d="${dpath}" fill="none" stroke="#333c49" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>`
+         + `<path d="${dpath}" fill="none" stroke="#caa83a" stroke-width="1.3" stroke-dasharray="7 8" opacity="0.7" stroke-linejoin="round" stroke-linecap="round"/>`;
   };
   let s="";
   // apron pad beneath the gates
   s+=`<rect x="52" y="576" width="392" height="54" rx="7" fill="#2a313c" opacity="0.85" stroke="#11161d" stroke-width="1"/>`;
-  // parallel spine down the left, with connectors to each runway threshold
-  s+=tw([{x:130,y:150},{x:130,y:602}]);
-  s+=tw([{x:130,y:150},{x:250,y:150}]);
-  s+=tw([{x:130,y:280},{x:250,y:280}]);
-  s+=tw([{x:130,y:410},{x:250,y:410}]);
-  // bottom taxiway from apron across to the diagonal's south threshold
-  s+=tw([{x:130,y:602},{x:545,y:602},{x:656,y:525}]);
+
+  // a full-length PARALLEL taxiway running just south of each parallel runway,
+  // joined to the runway by short angled exit/entry taxiways at several points (not the ends).
+  // The 27C/09C taxiway is split with a gap where runway 14/32 crosses (taxiways hold short of an active runway).
+  const para=[
+    {rwY:150,txY:188, exits:[330,440,550,620]},
+    {rwY:280,txY:318, segs:[[268,446],[524,682]], exits:[330,620]},  // gap 446–524 clears 14/32 band (460–507)
+    {rwY:410,txY:448, segs:[[268,554],[632,682]], exits:[330,440]},  // gap 554–632 clears 14/32 band (568–615)
+  ];
+  para.forEach(p=>{
+    if(p.segs){ p.segs.forEach(g=> s+=tw([{x:g[0],y:p.txY},{x:g[1],y:p.txY}]) ); }
+    else s+=tw([{x:268,y:p.txY},{x:682,y:p.txY}]);
+    p.exits.forEach(x=>{ s+=tw([{x:x,y:p.rwY},{x:x+28,y:p.txY}]); });
+  });
+
+  // perimeter taxiway: apron -> up the left side -> serves each parallel taxiway, plus a runway-end link
+  s+=tw([{x:130,y:188},{x:130,y:602}]);                       // left perimeter spine
+  s+=tw([{x:130,y:188},{x:268,y:188}]);                       // to RWY 27R/09L parallel
+  s+=tw([{x:130,y:318},{x:268,y:318}]);                       // to RWY 27C/09C parallel
+  s+=tw([{x:130,y:448},{x:268,y:448}]);                       // to RWY 27L/09R parallel
+  // a holding-point link to the west thresholds (entry for departures backtaxiing)
+  s+=tw([{x:268,y:188},{x:250,y:150}]);
+  s+=tw([{x:268,y:448},{x:250,y:410}]);
+
+  // diagonal runway 14/32: its own short parallel taxiway with an angled exit, linked to the bottom apron taxi
+  s+=tw([{x:130,y:602},{x:430,y:602},{x:512,y:560}]);          // apron edge taxi toward the diagonal
+  s+=tw([{x:512,y:560},{x:600,y:485}]);                        // parallel to the diagonal
+  s+=tw([{x:560,y:455},{x:600,y:485}]);                        // angled exit onto 14/32
   return s;
 }
 
@@ -731,6 +890,16 @@ function drawRunway(r){
   const P=(d,o)=>({x:r.ax+ux*d+px*o, y:r.ay+uy*d+py*o});  // point along/across
   const poly=pts=>pts.map(p=>p.x.toFixed(1)+","+p.y.toFixed(1)).join(" ");
   let s="";
+  if(!r.open){
+    // buildable plot: faint dashed outline + cost label (no markings)
+    const ghost=[P(0,-W),P(len,-W),P(len,W),P(0,W)];
+    s+=`<polygon points="${poly(ghost)}" fill="#1a2740" fill-opacity="0.35" stroke="#3a5e8c" stroke-width="1.4" stroke-dasharray="9 8" opacity="0.7"/>`;
+    // diagonal runways: push the label down-runway so it clears the horizontal runway's label
+    const lab = diag ? P(len*0.72,26) : mid(r);
+    s+=`<text x="${lab.x}" y="${lab.y-3}" fill="#6f9fd0" font-size="12" text-anchor="middle" font-family="Chakra Petch" font-weight="700" opacity="0.9">${r.name}</text>`;
+    s+=`<text x="${lab.x}" y="${lab.y+13}" fill="var(--cyan)" font-size="11" text-anchor="middle" font-family="IBM Plex Mono" opacity="0.85">⊕ BUILD · $${r.cost}</text>`;
+    return s;
+  }
   // shoulder
   s+=`<polygon points="${poly([P(0,-W-3),P(len,-W-3),P(len,W+3),P(0,W+3)])}" fill="#1c222b" opacity="0.85"/>`;
   // asphalt
@@ -905,8 +1074,12 @@ function render(){
   const h=String(Math.floor(G.clockMin/60)).padStart(2,"0"), m=String(G.clockMin%60).padStart(2,"0");
   $("#clock").textContent=h+":"+m;
   $("#level").textContent=G.level;
+  $("#rank").textContent=rankFor(G.level);
   $("#ops").textContent=G.opsLevel+"/"+G.opsTarget;
   $("#score").textContent=G.score;
+  $("#funds").textContent="$"+G.money;
+  const canAfford=UPGRADES.some(u=>u.can()&&G.money>=u.cost());
+  $("#build").classList.toggle("afford", canAfford);
   const sk=$("#strikes"); sk.innerHTML="";
   for(let i=0;i<G.maxStrikes;i++){const s=document.createElement("span");s.textContent= i<G.strikes?"◆":"◇";s.style.color=i<G.strikes?"var(--phos)":"#3a1414";sk.appendChild(s);}
   // strips
@@ -928,15 +1101,16 @@ function render(){
     if(p.emerg) badges+=` <span class="badge b-em">${p.emerg==="FUEL"?"MIN FUEL":"MEDICAL"}</span>`;
     let mid="";
     if(p.kind==="ARR"){
+      const fuel=(typeof p.fuel==="number")?p.fuel:0;
       const cap=p.maxfuel||10;
-      const pct=Math.max(0,Math.min(1,p.fuel/cap))*100;
-      const fc=p.fuel<=3?"crit":(p.fuel<=5?"low":"");
+      const pct=Math.max(0,Math.min(1,fuel/cap))*100;
+      const fc=fuel<=3?"crit":(fuel<=5?"low":"");
       // tick marks: one divider per unit of capacity (capped so it stays legible)
       const ticks=Math.min(cap,14);
       let tk=""; for(let i=1;i<ticks;i++){ tk+=`<span class="tick" style="left:${i/ticks*100}%"></span>`; }
       mid=`<div class="fuel ${fc}"><span>FUEL</span>`
         +`<span class="gauge"><i style="width:${pct}%"></i>${tk}</span>`
-        +`<b>${p.fuel}<span class="unit">${p.fuel===1?"turn":"turns"}</span></b>`
+        +`<b>${fuel}<span class="unit">${fuel===1?"turn":"turns"}</span></b>`
         +`<span style="margin-left:auto">${p.requiresLong?"⚑ LONG RWY":""}</span></div>`;
     }else{
       mid=`<div class="fuel"><span>HOLDING · GATE ${String.fromCharCode(65+(p.id.charCodeAt(1)%6))}${ri(1,9)}</span>${p.waited>=4?'<span class="assigned-tag" style="margin-left:auto;color:var(--red)">DELAYED</span>':''}</div>`;
@@ -965,9 +1139,10 @@ function render(){
 /* ---------- log ---------- */
 function logmsg(type,txt){
   G.log.unshift({type,txt});
-  if(G.log.length>40)G.log.pop();
+  if(G.log.length>60)G.log.pop();
   const el=$("#log");
   el.innerHTML=G.log.map(l=>`<p class="${l.type}">${l.txt}</p>`).join("");
+  el.scrollTop=0;                       // keep the newest line in view
 }
 
 /* ---------- game over ---------- */
@@ -975,8 +1150,8 @@ function gameOver(reason){
   $("#ovscore").textContent=G.score;
   $("#ovlevel").textContent=G.level;
   $("#ovhandled").textContent=G.handled;
-  $("#overmsg").textContent = "You safely handled "+G.handled+" aircraft and reached level "+G.level+
-    ". A crash and two more incidents ended your shift — controllers carry an immense responsibility, and so do you. Sharpen your sequencing and try again.";
+  $("#overmsg").textContent = "You retired at the rank of "+rankFor(G.level)+", having safely handled "+G.handled+
+    " aircraft across "+G.level+" level"+(G.level===1?"":"s")+". Controllers carry an immense responsibility, and so do you. Sharpen your sequencing and try again.";
   $("#over").classList.remove("hidden");
   sfx.alarm();
 }
@@ -991,6 +1166,22 @@ function refreshIntroButtons(){
   $("#resumebtn").style.display = has ? "block" : "none";
   $("#startbtn").textContent = has ? "NEW SHIFT (discard save) ▶" : "CLEAR FOR DUTY ▶";
 }
+function renderShop(){
+  $("#shopfunds").textContent="Funds available: $"+G.money;
+  const list=$("#shoplist");
+  const items=UPGRADES.filter(u=>u.can()||u.owned());
+  list.innerHTML = items.map(u=>{
+    const owned=u.owned(), c=u.cost(), afford=G.money>=c;
+    const right = owned ? `<span class="owned-tag">✓ BUILT</span>`
+      : `<button class="buy" data-id="${u.id}" ${afford?"":"disabled"}>$${c}</button>`;
+    return `<div class="shopitem ${owned?"owned":""}"><div class="info"><div class="nm">${u.name}</div><div class="ds">${u.sub}</div></div>${right}</div>`;
+  }).join("") || `<div class="shoplist-empty">Every upgrade is built. The airport is complete — nice work, Chief.</div>`;
+  list.querySelectorAll(".buy").forEach(b=>{ b.onclick=()=>buyUpgrade(b.dataset.id); });
+}
+function openShop(){ if(G.over)return; renderShop(); $("#shop").classList.remove("hidden"); }
+function closeShop(){ $("#shop").classList.add("hidden"); }
+$("#build").onclick=openShop;
+$("#shopclose").onclick=closeShop;
 $("#startbtn").onclick=()=>{ if(hasSave() && !confirm("Start a new shift? This discards your saved game.")) return; startNew(); };
 $("#resumebtn").onclick=resumeGame;
 $("#restart").onclick=startNew;
