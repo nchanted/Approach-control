@@ -93,6 +93,12 @@ header{
 .shopitem .buy:hover:not(:disabled){border-color:var(--cyan);box-shadow:0 0 12px #4db8ff55;}
 .shopitem .buy:disabled{opacity:.4;cursor:not-allowed;}
 .shopitem.owned{opacity:.62;}
+.incidents{margin:4px 0 14px;border:1px solid #5a2230;border-radius:8px;background:#2a1418;padding:8px 12px;text-align:left;}
+.incidents .ih{font-family:"Chakra Petch";font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#ff8a82;margin-bottom:4px;}
+.incidents .ir{font-size:12px;color:#f3c7c4;line-height:1.5;}
+.incidents .ir b{color:#fff;}
+.bestline{font-family:"Chakra Petch";font-size:12px;letter-spacing:.06em;color:var(--cyan);margin:4px 0 14px;}
+.bestline .new{color:var(--amber);}
 .shopitem .owned-tag{font-family:"Chakra Petch";font-weight:700;font-size:12px;color:var(--phos);flex:0 0 auto;}
 .btn{font-family:"Chakra Petch","Bahnschrift","Segoe UI Semibold",system-ui,sans-serif;font-weight:600;cursor:pointer;border-radius:7px;
   border:1px solid var(--line);background:#1d3a5c;color:var(--ink);padding:7px 12px;letter-spacing:.06em;}
@@ -335,7 +341,7 @@ main{flex:1;display:flex;min-height:0;}
       <li>Watch for <b>weather closures</b> and <b>fuel / medical emergencies</b> as levels climb.</li>
       <li>Every wave is <b>always landable</b> with the right order — the pressure is finding it before fuel runs out.</li>
       <li>You start with <b>one runway</b>. Each operation earns <b>funds</b> — tap <b>✦ BUILD</b> to open new runways, extend them for heavies, add rapid-exit taxiways, ILS, terminals and more. More capacity means more traffic and more income.</li>
-      <li>Three strikes and you're relieved of duty. Your shift <b>auto-saves</b> each turn.</li>
+      <li>Three strikes and you're relieved of duty. Climb all <b>16 levels</b> to retire as <b>Air Marshal</b> — the game's summit. Your shift <b>auto-saves</b> each turn.</li>
     </ul>
     <button class="btn go" id="resumebtn" style="display:none;background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0">▶ RESUME SHIFT</button>
     <button class="btn go" id="startbtn">CLEAR FOR DUTY ▶</button>
@@ -348,11 +354,14 @@ main{flex:1;display:flex;min-height:0;}
     <h1 id="overttl" style="color:var(--red)">DUTY ENDED</h1>
     <div class="sub" id="oversub">Airspace control relinquished</div>
     <p id="overmsg"></p>
+    <div id="overincidents"></div>
     <div class="bigstat">
       <div><div class="v" id="ovscore">0</div><div class="k">SCORE</div></div>
       <div><div class="v" id="ovlevel">1</div><div class="k">LEVEL</div></div>
       <div><div class="v" id="ovhandled">0</div><div class="k">HANDLED</div></div>
     </div>
+    <div class="bestline" id="overbest"></div>
+    <button class="btn go" id="contendless" style="display:none;background:linear-gradient(180deg,#1d6a4c,#0f3d2c);border-color:#3ad08a">▶ CONTINUE · LEGACY SHIFT</button>
     <button class="btn go" id="restart">RETURN TO TOWER ▶</button>
   </div>
 </div>
@@ -377,6 +386,16 @@ const chance=p=>Math.random()<p;
 
 /* ---------- persistence (localStorage with in-memory fallback) ---------- */
 const SAVE_KEY="approach_save_v1";
+const BEST_KEY="approach_best_v1";
+function getBest(){ try{ const b=JSON.parse(sGet(BEST_KEY)); return (b&&typeof b.score==="number")?b:null; }catch(e){ return null; } }
+function updateBest(){
+  const cur=getBest();
+  if(!cur || G.score>cur.score){
+    sSet(BEST_KEY, JSON.stringify({score:G.score, level:G.level, rank:rankFor(G.level), handled:G.handled, retired:!!G._retired, ts:Date.now()}));
+    return true;   // new record
+  }
+  return false;
+}
 const _mem={};
 function sGet(k){ try{return localStorage.getItem(k);}catch(e){return _mem[k]??null;} }
 function sSet(k,v){ try{localStorage.setItem(k,v);}catch(e){_mem[k]=v;} }
@@ -388,7 +407,7 @@ function saveGame(){
     const data={ v:2, ts:Date.now(),
       G:{ level:G.level, turn:G.turn, score:G.score, strikes:G.strikes, maxStrikes:G.maxStrikes,
           opsLevel:G.opsLevel, opsTarget:G.opsTarget, handled:G.handled, clockMin:G.clockMin, seq:G.seq,
-          money:G.money, up:G.up,
+          money:G.money, up:G.up, incidents:G.incidents||[], endless:!!G.endless,
           planes:G.planes.filter(p=>p.status!=="crash").map(p=>{ const c={...p}; delete c._to; delete c._heading; c.status="active"; c.assigned=null; return c; }),
           log:G.log.slice(0,14) },
       rwy:RWY.map(r=>({id:r.id, open:!!r.open, long:!!r.long, closedFor:r.closedFor||0, wakeFor:r.wakeFor||0})) };
@@ -404,7 +423,9 @@ function loadGame(){
   fresh();                                   // init structures + RWY designators + defaults
   Object.assign(G, d.G);
   if(!G.up) G.up={};
-  G.up=Object.assign({rapidExit:0,ils:false,terminal:0,slots:0,revenue:0,catiii:false,hangar:0}, G.up);
+  G.up=Object.assign({rapidExit:0,ils:false,terminal:0,slots:0,revenue:0,catiii:false,hangar:0,restores:0}, G.up);
+  if(!Array.isArray(G.incidents)) G.incidents=[];
+  if(typeof G.endless!=="boolean") G.endless=false;
   if(G.up.rapidExit===true) G.up.rapidExit=1;   // migrate older boolean saves
   if(typeof G.money!=="number") G.money=250;
   G.over=false; G.busy=false; G.sel=null;
@@ -505,7 +526,7 @@ function fresh(){
   RWY.forEach((r,i)=>{ r.closedFor=0; r.wakeFor=0; r.open=(r.id==="A"); r.long=r.baseLong; });
   G={level:1,turn:1,score:0,strikes:3,maxStrikes:3,opsLevel:0,opsTarget:6,
      handled:0,clockMin:6*60,planes:[],sel:null,busy:false,over:false,seq:1,log:[],
-     money:150, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0}};
+     money:150, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0, restores:0}, incidents:[], endless:false};
   // seed
   G.planes.push(mkPlane("ARR",{fuel:9}));
   G.planes.push(mkPlane("DEP",{}));
@@ -560,6 +581,9 @@ const UPGRADES=[
   {id:"hangar", name:"Maintenance Hangars", sub:"Overnight servicing — +1 strike beyond the standard limit",
     cost:()=>3200+ (G.up.hangar||0)*2400, owned:()=>(G.up.hangar||0)>=2, can:()=>G.maxStrikes>=5 && (G.up.hangar||0)<2,
     buy:()=>{G.up.hangar=(G.up.hangar||0)+1; G.maxStrikes++; G.strikes++;} },
+  {id:"incident", name:"Incident Review Board", sub:"Clear one strike from your record — only after an incident",
+    cost:()=>5000+ (G.up.restores||0)*3000, owned:()=>false, can:()=>G.strikes<G.maxStrikes,
+    buy:()=>{G.strikes=Math.min(G.maxStrikes,G.strikes+1); G.up.restores=(G.up.restores||0)+1;} },
 ];
 function buyUpgrade(id){
   if(G.busy) return;
@@ -585,10 +609,12 @@ function levelCfg(L){
   };
 }
 
-// named controller ranks earned per level (real ATC career-style progression)
+// named controller ranks earned per level (career progression); level 16 = the summit.
 const RANKS=["Trainee","Ground Controller","Tower Controller","Approach Controller",
   "Departure Controller","Radar Controller","Terminal Lead","Watch Supervisor",
-  "Senior Controller","Operations Manager","Centre Chief","Flight Director","Air Marshal"];
+  "Senior Controller","Operations Manager","Centre Chief","Flight Director",
+  "Regional Director","National Airspace Director","Chief of Air Operations","Air Marshal"];
+const MAX_LEVEL=16;   // reaching the top of the ladder = an honourable retirement (a win)
 function rankFor(L){ return RANKS[Math.min(L,RANKS.length)-1] || RANKS[RANKS.length-1]; }
 
 
@@ -726,15 +752,16 @@ function execute(){
   G.busy=true; $("#exec").disabled=true; G.sel=null;
   // resolve assignments
   let any=false;
+  const wakeToApply=[];          // apply wake AFTER all clearances, so a landing can't block its sibling this turn
   G.planes.forEach(p=>{
     if(!p.assigned)return;
     const r=rwById(p.assigned); const st=runwayState(r,p);
-    if(!st.ok){ p.assigned=null; return; } // safety net
+    if(!st.ok){ p.assigned=null; logmsg("warn","⚠ "+p.callsign+" clearance voided ("+st.why+") — still airborne"); return; }
     any=true;
     p.status="cleared";
     p._to=mid(r);
     p._heading = p.kind==="ARR"?180:300;
-    if(p.wake>0) r.wakeFor=wakeTurns(p); // heavies/supers leave wake (rapid-exit taxiways reduce it)
+    if(p.wake>0) wakeToApply.push([r, wakeTurns(p)]); // heavies/supers leave wake (applied after the loop)
     // reward: points (lifetime score) + money (wallet) — same amount to both
     let pts = p.kind==="ARR"?45:35;
     if(p.kind==="ARR") pts += p.fuel*2;            // small bonus for landing with fuel to spare
@@ -744,6 +771,7 @@ function execute(){
     earn(pts);
     G.opsLevel++; G.handled++;
   });
+  wakeToApply.forEach(([r,w])=>{ r.wakeFor=Math.max(r.wakeFor||0, w); });
   if(any){ sfx.land(); } 
   renderMarkers(); // glide cleared planes to runway
   setTimeout(finalize, 760);
@@ -760,6 +788,8 @@ function finalize(){
   });
   crashed.forEach(p=>{
     G.score=Math.max(0,G.score-200); G.strikes--;
+    if(!G.incidents) G.incidents=[];
+    G.incidents.push({callsign:p.callsign, turn:G.turn, type:p.type});
     logmsg("bad","✖ "+p.callsign+" FUEL EXHAUSTED — emergency landing failed");
   });
   if(crashed.length){ sfx.alarm(); }
@@ -786,6 +816,9 @@ function finalize(){
   spawn(cfg);
   // level up
   if(G.opsLevel>=G.opsTarget){
+    // Completing the top level is a career summit — an honourable retirement (a win),
+    // unless the player has chosen to keep going on a Legacy (endless) shift.
+    if(!G.endless && G.level>=MAX_LEVEL){ G.over=true; clearSave(); render(); return victory(); }
     G.level++; earn(200); G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
     logmsg("sys","▲ PROMOTED to "+rankFor(G.level)+" — Level "+G.level+" (+$200)"); sfx.level();
   }
@@ -1152,10 +1185,62 @@ function gameOver(reason){
   $("#ovscore").textContent=G.score;
   $("#ovlevel").textContent=G.level;
   $("#ovhandled").textContent=G.handled;
-  $("#overmsg").textContent = "You retired at the rank of "+rankFor(G.level)+", having safely handled "+G.handled+
-    " aircraft across "+G.level+" level"+(G.level===1?"":"s")+". Controllers carry an immense responsibility, and so do you. Sharpen your sequencing and try again.";
+  const inc=G.incidents||[];
+  const n=inc.length;
+  $("#overttl").style.color="var(--red)";
+  $("#overttl").textContent="RELIEVED OF DUTY";
+  $("#oversub").textContent="Three strikes — airspace control relinquished";
+  // Plain explanation of WHY the shift ended.
+  $("#overmsg").innerHTML =
+    "Your shift ended because you used up all <b>three strikes</b>. "
+    + "A strike is charged whenever an arriving aircraft runs out of fuel before it can land — "
+    + (n>=3 ? "the third one just now forced you off position. " : "")
+    + "You reached the rank of <b>"+rankFor(G.level)+"</b> (level "+G.level+") and safely handled <b>"
+    + G.handled+"</b> aircraft. To last longer, land low-fuel arrivals first and build runway capacity before traffic outpaces you.";
+  // Incident-by-incident recap so the player sees exactly what cost them.
+  const box=$("#overincidents");
+  if(n){
+    const rows=inc.map((x,i)=>`<div class="ir">${i+1}. <b>${x.callsign}</b>${x.type?(" ("+x.type+")"):""} — ran out of fuel on turn ${x.turn}</div>`).join("");
+    box.className="incidents";
+    box.innerHTML=`<div class="ih">Strikes charged this shift (${n})</div>${rows}`;
+  } else { box.className=""; box.innerHTML=""; }
+  G._retired=false; showBestLine(updateBest());
+  $("#contendless").style.display="none";
   $("#over").classList.remove("hidden");
   sfx.alarm();
+}
+
+// Honourable retirement at the summit — a win.
+function victory(){
+  G._retired=true;
+  $("#ovscore").textContent=G.score;
+  $("#ovlevel").textContent=G.level;
+  $("#ovhandled").textContent=G.handled;
+  $("#overttl").style.color="var(--cyan)";
+  $("#overttl").textContent="RETIRED · AIR MARSHAL";
+  $("#oversub").textContent="Career complete — the summit of the tower";
+  $("#overmsg").innerHTML =
+    "Congratulations — you climbed every rank to <b>Air Marshal</b> and completed all "+MAX_LEVEL+" levels "
+    + "with strikes to spare. You safely handled <b>"+G.handled+"</b> aircraft and built your airport from a single "
+    + "runway into a full operation. This is the honourable end of a distinguished career — you can retire here, "
+    + "or take a <b>Legacy Shift</b> and see how far past the summit you can push for score.";
+  const box=$("#overincidents");
+  const n=(G.incidents||[]).length;
+  box.className= n?"incidents":"";
+  box.innerHTML= n ? `<div class="ih">Strikes charged across the whole career (${n})</div>`
+      + G.incidents.map((x,i)=>`<div class="ir">${i+1}. <b>${x.callsign}</b>${x.type?(" ("+x.type+")"):""} — turn ${x.turn}</div>`).join("")
+      : "";
+  showBestLine(updateBest());
+  $("#contendless").style.display="block";
+  $("#over").classList.remove("hidden");
+  sfx.level();
+}
+
+function showBestLine(isNew){
+  const b=getBest(); const el=$("#overbest");
+  if(!b){ el.textContent=""; return; }
+  el.innerHTML = isNew ? `<span class="new">★ NEW BEST SCORE · ${b.score}</span>`
+                       : `Best score: ${b.score} (${b.rank})`;
 }
 
 /* ---------- boot ---------- */
@@ -1187,6 +1272,12 @@ $("#shopclose").onclick=closeShop;
 $("#startbtn").onclick=()=>{ if(hasSave() && !confirm("Start a new shift? This discards your saved game.")) return; startNew(); };
 $("#resumebtn").onclick=resumeGame;
 $("#restart").onclick=startNew;
+$("#contendless").onclick=()=>{   // continue past the summit for score (Legacy Shift)
+  G.endless=true; G.over=false; G.busy=false;
+  G.level++; G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
+  logmsg("sys","★ LEGACY SHIFT — past the summit, chasing score…");
+  saveGame(); $("#over").classList.add("hidden"); $("#exec").disabled=false; render();
+};
 $("#exec").onclick=execute;
 $("#help").onclick=()=>{ refreshIntroButtons(); $("#intro").classList.remove("hidden"); };
 $("#sound").onclick=()=>{ soundOn=!soundOn; $("#sound").textContent=soundOn?"🔊":"🔇"; if(soundOn)sfx.click(); };
