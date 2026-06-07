@@ -444,9 +444,9 @@ const sfx={click:()=>beep(520,.05,"square",.04),assign:()=>beep(720,.07,"triangl
    `open` and `long` are dynamic game state (set in fresh()); baseLong/cost drive the build economy. */
 const RWY=[
   {id:"A",name:"",arr:"",dep:"",baseLong:true, cost:0,    ax:250,ay:150,bx:700,by:150, sufA:"L",sufB:"R"},
-  {id:"B",name:"",arr:"",dep:"",baseLong:true, cost:400,  ax:250,ay:280,bx:700,by:280, sufA:"C",sufB:"C"},
-  {id:"C",name:"",arr:"",dep:"",baseLong:false,cost:700,  ax:250,ay:410,bx:700,by:410, sufA:"R",sufB:"L"},
-  {id:"D",name:"",arr:"",dep:"",baseLong:false,cost:1000, ax:464,ay:295,bx:656,by:525, sufA:"",sufB:"", crosses:"C"},
+  {id:"B",name:"",arr:"",dep:"",baseLong:true, cost:550,  ax:250,ay:280,bx:700,by:280, sufA:"C",sufB:"C"},
+  {id:"C",name:"",arr:"",dep:"",baseLong:false,cost:1000, ax:250,ay:410,bx:700,by:410, sufA:"R",sufB:"L"},
+  {id:"D",name:"",arr:"",dep:"",baseLong:false,cost:1600, ax:464,ay:295,bx:656,by:525, sufA:"",sufB:"", crosses:"C"},
 ];
 // runway designator = magnetic heading / 10, from on-screen geometry (north = up).
 function bearingScreen(from,to){
@@ -505,7 +505,7 @@ function fresh(){
   RWY.forEach((r,i)=>{ r.closedFor=0; r.wakeFor=0; r.open=(r.id==="A"); r.long=r.baseLong; });
   G={level:1,turn:1,score:0,strikes:3,maxStrikes:3,opsLevel:0,opsTarget:6,
      handled:0,clockMin:6*60,planes:[],sel:null,busy:false,over:false,seq:1,log:[],
-     money:250, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0}};
+     money:150, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0}};
   // seed
   G.planes.push(mkPlane("ARR",{fuel:9}));
   G.planes.push(mkPlane("DEP",{}));
@@ -529,36 +529,36 @@ const UPGRADES=[
     cost:()=>rwById("D").cost, owned:()=>rwById("D").open, can:()=>!rwById("D").open,
     buy:()=>{rwById("D").open=true;} },
   {id:"ext-C", name:"Extend "+rwById("C").name+" to long", sub:"Lets it accept heavies & superjumbos",
-    cost:()=>500, owned:()=>rwById("C").open&&rwById("C").long, can:()=>rwById("C").open&&!rwById("C").long,
+    cost:()=>800, owned:()=>rwById("C").open&&rwById("C").long, can:()=>rwById("C").open&&!rwById("C").long,
     buy:()=>{rwById("C").long=true;} },
   {id:"ext-D", name:"Extend "+rwById("D").name+" to long", sub:"Lets it accept heavies & superjumbos",
-    cost:()=>500, owned:()=>rwById("D").open&&rwById("D").long, can:()=>rwById("D").open&&!rwById("D").long,
+    cost:()=>800, owned:()=>rwById("D").open&&rwById("D").long, can:()=>rwById("D").open&&!rwById("D").long,
     buy:()=>{rwById("D").long=true;} },
   {id:"rapid", name:"Rapid-Exit Taxiways", sub:"Heavies clear faster — wake blocks one turn less",
-    cost:()=>800+ (G.up.rapidExit||0)*900, owned:()=>(G.up.rapidExit||0)>=2, can:()=>(G.up.rapidExit||0)<2,
+    cost:()=>1200+ (G.up.rapidExit||0)*1400, owned:()=>(G.up.rapidExit||0)>=2, can:()=>(G.up.rapidExit||0)<2,
     buy:()=>{G.up.rapidExit=(G.up.rapidExit||0)+1;} },
   {id:"ils", name:"ILS / Approach Lighting", sub:"Arrivals inbound with more fuel margin",
-    cost:()=>600, owned:()=>G.up.ils, can:()=>!G.up.ils,
+    cost:()=>900, owned:()=>G.up.ils, can:()=>!G.up.ils,
     buy:()=>{G.up.ils=true;} },
   {id:"term", name:"Terminal Expansion", sub:"Handle more aircraft at once (+4 capacity)",
-    cost:()=>400+G.up.terminal*350, owned:()=>G.up.terminal>=4, can:()=>G.up.terminal<4,
+    cost:()=>600+G.up.terminal*450, owned:()=>G.up.terminal>=4, can:()=>G.up.terminal<4,
     buy:()=>{G.up.terminal++;} },
   {id:"rescue", name:"Fire & Rescue Service", sub:"+1 strike — survive one more incident",
-    cost:()=>900, owned:()=>G.maxStrikes>=5, can:()=>G.maxStrikes<5,
+    cost:()=>1300, owned:()=>G.maxStrikes>=5, can:()=>G.maxStrikes<5,
     buy:()=>{G.maxStrikes++; G.strikes++;} },
 
   // ----- LATE-GAME TIER: expensive, several repeatable, meaningful deep into a run -----
   {id:"slots", name:"Parallel Approach Capacity", sub:"Independent simultaneous approaches — land one extra aircraft every turn",
-    cost:()=>2500+ (G.up.slots||0)*2500, owned:()=>(G.up.slots||0)>=3, can:()=>(G.up.slots||0)<3 && openRunways().length>=2,
+    cost:()=>4000+ (G.up.slots||0)*3500, owned:()=>(G.up.slots||0)>=3, can:()=>(G.up.slots||0)<3 && openRunways().length>=2,
     buy:()=>{G.up.slots=(G.up.slots||0)+1;} },
   {id:"revenue", name:"Commercial Concessions", sub:"Retail, lounges & parking — passive income every turn",
-    cost:()=>1800+ (G.up.revenue||0)*1600, owned:()=>(G.up.revenue||0)>=4, can:()=>(G.up.revenue||0)<4,
+    cost:()=>2800+ (G.up.revenue||0)*2200, owned:()=>(G.up.revenue||0)>=4, can:()=>(G.up.revenue||0)<4,
     buy:()=>{G.up.revenue=(G.up.revenue||0)+1;} },
   {id:"catiii", name:"CAT III Flow Management", sub:"All-weather sequencing — extra fuel margin, stacks with ILS",
-    cost:()=>2200, owned:()=>G.up.catiii, can:()=>!!G.up.ils && !G.up.catiii,
+    cost:()=>3200, owned:()=>G.up.catiii, can:()=>!!G.up.ils && !G.up.catiii,
     buy:()=>{G.up.catiii=true;} },
   {id:"hangar", name:"Maintenance Hangars", sub:"Overnight servicing — +1 strike beyond the standard limit",
-    cost:()=>2000+ (G.up.hangar||0)*1500, owned:()=>(G.up.hangar||0)>=2, can:()=>G.maxStrikes>=5 && (G.up.hangar||0)<2,
+    cost:()=>3200+ (G.up.hangar||0)*2400, owned:()=>(G.up.hangar||0)>=2, can:()=>G.maxStrikes>=5 && (G.up.hangar||0)<2,
     buy:()=>{G.up.hangar=(G.up.hangar||0)+1; G.maxStrikes++; G.strikes++;} },
 ];
 function buyUpgrade(id){
@@ -574,7 +574,9 @@ function extraLandSlots(){ return (G.up&&G.up.slots)||0; }   // simultaneous-app
 
 function levelCfg(L){
   const tbl={1:[0,1],2:[1,1],3:[1,2],4:[1,2],5:[2,2],6:[2,3],7:[2,3]};
-  const sp=tbl[L]||[3,4];
+  // beyond the hand-tuned early table, spawn demand keeps rising with level (feasibility still
+  // clamps it to what's drainable, so it's hard — but not impossible — to keep the queue clear).
+  const sp = tbl[L] || [2+Math.floor((L-7)/3), 4+Math.floor((L-7)/2)];
   return {
     spawnMin:sp[0], spawnMax:sp[1],
     fuelMin:Math.max(3,10-L), fuelMax:Math.max(5,13-L),
@@ -734,10 +736,10 @@ function execute(){
     p._heading = p.kind==="ARR"?180:300;
     if(p.wake>0) r.wakeFor=wakeTurns(p); // heavies/supers leave wake (rapid-exit taxiways reduce it)
     // reward: points (lifetime score) + money (wallet) — same amount to both
-    let pts = p.kind==="ARR"?100:80;
-    if(p.kind==="ARR") pts += p.fuel*4;            // reward early landings
-    if(p.kind==="DEP") pts -= Math.min(p.waited*5,40);
-    if(p.emerg) pts += 220;
+    let pts = p.kind==="ARR"?45:35;
+    if(p.kind==="ARR") pts += p.fuel*2;            // small bonus for landing with fuel to spare
+    if(p.kind==="DEP") pts -= Math.min(p.waited*4,28);
+    if(p.emerg) pts += 110;
     pts=Math.max(5,pts);
     earn(pts);
     G.opsLevel++; G.handled++;
@@ -780,12 +782,12 @@ function finalize(){
   // advance time + spawn
   G.turn++; G.clockMin=(G.clockMin+ri(3,5))%(24*60);
   // commercial concessions: passive per-turn income scaling with terminals in operation
-  if(G.up.revenue>0){ const inc=G.up.revenue*(35+openRunways().length*15); earn(inc); }
+  if(G.up.revenue>0){ const inc=G.up.revenue*(20+openRunways().length*10); earn(inc); }
   spawn(cfg);
   // level up
   if(G.opsLevel>=G.opsTarget){
-    G.level++; earn(300); G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
-    logmsg("sys","▲ PROMOTED to "+rankFor(G.level)+" — Level "+G.level+" (+$300)"); sfx.level();
+    G.level++; earn(200); G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
+    logmsg("sys","▲ PROMOTED to "+rankFor(G.level)+" — Level "+G.level+" (+$200)"); sfx.level();
   }
   // game over?
   if(G.strikes<=0){ G.over=true; clearSave(); render(); return gameOver("strikes"); }
@@ -809,14 +811,14 @@ function spawn(cfg){
     return true;
   };
   for(let i=0;i<n;i++){ if(tryAdd(chance(.55)?"ARR":"DEP")) added++; }
-  // Board-occupancy floor scales with level so the player always has room to clear the queue:
-  //  L1–3: floor 0 (you can fully empty the board and breathe)
-  //  L4+ : a rising minimum keeps the pressure on, capped below maxPlanes so it's always clearable.
-  const floor = Math.min(Math.max(0, G.level-3), cfg.maxPlanes-2);
+  // The queue should be CLEARABLE with skill through the whole mid-game — difficulty comes from
+  // spawn volume + tight fuel, not a forced backlog. Only very late does a gentle hard floor make
+  // a fully empty board impossible, for an end-game "never lets up" feel.
+  const floor = Math.min(Math.max(0, G.level-11), 4, cfg.maxPlanes-2);
   let guard=0;
   while(G.planes.length<floor && guard++<8){ if(!tryAdd(chance(.6)?"ARR":"DEP")) break; }
-  // Anti-stall: if nothing at all is in play (e.g. an empty roll on a quiet level), make sure at
-  // least one aircraft appears within the next turn or two so the game never sits idle.
+  // Anti-stall: if the board is completely empty after a quiet turn, bring in one aircraft so the
+  // game never sits idle. (You still cleared the queue — it just resumes next turn.)
   if(G.planes.length===0 && added===0 && chance(.7)) tryAdd(chance(.6)?"ARR":"DEP");
 }
 
