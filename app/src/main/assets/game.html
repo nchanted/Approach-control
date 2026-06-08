@@ -29,6 +29,12 @@
   --line:#2d5582; --panel:#101f33dd; --panel2:#16293f;
   --strip:#17293f; --strip-line:#1f4a7200;
 }
+/* High-contrast / colorblind-friendlier palette (brighter ink, blue/orange-leaning, stronger lines) */
+body.hc{
+  --ink:#ffffff; --ink-dim:#b9d4f0; --phos:#5cc8ff; --amber:#ffd23f; --red:#ff5a4d; --cyan:#46e0d0;
+  --grid:#3a6699; --line:#5a8fc4;
+}
+body.hc .fuel.crit b, body.hc .mk.crit .tag{ outline:1px solid var(--amber); }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;
   -webkit-touch-callout:none; -webkit-user-select:none; touch-action:manipulation;}
 html,body{margin:0;height:100%;overscroll-behavior:none;}
@@ -99,6 +105,50 @@ header{
 .incidents .ir b{color:#fff;}
 .bestline{font-family:"Chakra Petch";font-size:12px;letter-spacing:.06em;color:var(--cyan);margin:4px 0 14px;}
 .bestline .new{color:var(--amber);}
+/* critical fuel pulse */
+@keyframes fuelpulse{0%,100%{opacity:1}50%{opacity:.35}}
+.fuel.crit{animation:fuelpulse 1s ease-in-out infinite;}
+.fuel.crit b{color:var(--red);}
+.mk.crit .tag{animation:fuelpulse 1s ease-in-out infinite; box-shadow:0 0 8px var(--red);}
+/* achievement toasts */
+#toasts{position:fixed;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+  z-index:120;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:max-content;max-width:92vw;}
+.toast{display:flex;gap:10px;align-items:center;background:linear-gradient(180deg,#1d4670,#12304c);
+  border:1px solid var(--cyan);border-radius:10px;padding:9px 14px;box-shadow:0 6px 24px #0009;
+  opacity:0;transform:translateY(-12px);transition:opacity .3s,transform .3s;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast .tmedal{font-size:24px;}
+.toast .tt{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);}
+.toast .tn{font-family:"Chakra Petch";font-weight:700;font-size:15px;color:#fff;}
+.toast .td{font-size:11px;color:var(--ink-dim);}
+/* stars */
+.stars{letter-spacing:2px;color:var(--amber);}
+.stars .off{color:#3a4a5e;}
+/* stats + settings panels reuse .card; grid + rows */
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px;}
+.statcell{background:#12273f;border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-align:left;}
+.statcell .sv{font-family:"Chakra Petch";font-weight:700;font-size:20px;color:var(--phos);}
+.statcell .sk{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);}
+.achrow{display:flex;gap:10px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#12273f;margin:6px 0;text-align:left;}
+.achrow.locked{opacity:.45;}
+.achrow .am{font-size:20px;}
+.achrow .an{font-family:"Chakra Petch";font-weight:600;font-size:13px;color:#dbecff;}
+.achrow .ad{font-size:11px;color:var(--ink-dim);}
+.setrow{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#12273f;margin:8px 0;}
+.setrow .sl{font-size:13px;color:#dbecff;text-align:left;}
+.toggle{font-family:"Chakra Petch";font-weight:700;font-size:13px;padding:7px 14px;border-radius:7px;border:1px solid #3a8ad0;background:#1d5a8c;color:#eaffff;cursor:pointer;}
+.toggle.off{background:#26323f;border-color:#3a4a5e;color:#8aa6c4;}
+.linkrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+.linkbtn{font-family:"Chakra Petch";font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);background:none;border:none;cursor:pointer;text-decoration:underline;}
+.linkbtn:hover{color:var(--cyan);}
+/* tutorial coachmark */
+#coach{position:fixed;z-index:115;max-width:300px;background:linear-gradient(180deg,#1d4670,#12304c);
+  border:1px solid var(--cyan);border-radius:10px;padding:12px 14px;box-shadow:0 6px 30px #000a;}
+#coach .ct{font-family:"Chakra Petch";font-weight:700;font-size:13px;color:var(--cyan);margin-bottom:4px;}
+#coach .cb{font-size:12px;line-height:1.45;color:#dbecff;}
+#coach .cx{margin-top:10px;display:flex;justify-content:space-between;align-items:center;}
+#coach .cstep{font-size:10px;color:var(--ink-dim);}
+#coach .cnext{font-family:"Chakra Petch";font-weight:700;font-size:12px;padding:6px 12px;border-radius:6px;border:1px solid #3a8ad0;background:#1d5a8c;color:#fff;cursor:pointer;}
 .shopitem .owned-tag{font-family:"Chakra Petch";font-weight:700;font-size:12px;color:var(--phos);flex:0 0 auto;}
 .btn{font-family:"Chakra Petch","Bahnschrift","Segoe UI Semibold",system-ui,sans-serif;font-weight:600;cursor:pointer;border-radius:7px;
   border:1px solid var(--line);background:#1d3a5c;color:var(--ink);padding:7px 12px;letter-spacing:.06em;}
@@ -205,10 +255,10 @@ main{flex:1;display:flex;min-height:0;}
 .log .ok{color:var(--phos)} .log .warn{color:var(--amber)} .log .bad{color:var(--red)} .log .sys{color:var(--cyan)}
 
 /* overlays */
-.overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
+.overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-start;justify-content:center;
   background:radial-gradient(circle at 50% 30%, #0c233cee, #06151ff5);backdrop-filter:blur(3px);
-  padding:20px;padding:max(20px,env(safe-area-inset-top)) 20px max(20px,env(safe-area-inset-bottom)); overflow:auto;}
-.card{max-width:560px;width:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:max(20px,env(safe-area-inset-top)) 20px max(20px,env(safe-area-inset-bottom)); overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.card{max-width:560px;width:100%;margin:auto;
   border:1px solid var(--line);border-radius:14px;
   background:linear-gradient(180deg,#1d467080,#14304860),#142d44;padding:26px 28px;box-shadow:0 0 60px #0008, inset 0 0 60px #2a5e8caa;}
 .card h1{margin:0 0 4px;font-size:30px;color:var(--phos);text-shadow:0 0 16px #4db8ff50;}
@@ -290,6 +340,7 @@ main{flex:1;display:flex;min-height:0;}
 </style>
 </head>
 <body>
+<div id="toasts"></div>
 <div id="app">
   <header>
     <div class="logo"><span class="dot"></span>APPROACH<span style="color:var(--ink-dim);font-weight:500">·CTL</span></div>
@@ -345,7 +396,43 @@ main{flex:1;display:flex;min-height:0;}
     </ul>
     <button class="btn go" id="resumebtn" style="display:none;background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0">▶ RESUME SHIFT</button>
     <button class="btn go" id="startbtn">CLEAR FOR DUTY ▶</button>
+    <div class="linkrow">
+      <button class="linkbtn" id="statslink">📊 Career stats</button>
+      <button class="linkbtn" id="achlink">🏅 Achievements</button>
+      <button class="linkbtn" id="setlink">⚙ Settings</button>
+    </div>
   </div>
+</div>
+
+<!-- CAREER STATS -->
+<div class="overlay hidden" id="stats">
+  <div class="card shopcard">
+    <h1 style="font-size:24px">Career Statistics</h1>
+    <div class="sub" id="statsbest">—</div>
+    <div class="statgrid" id="statsgrid"></div>
+    <h1 style="font-size:16px;margin:8px 0 2px">Achievements</h1>
+    <div id="statsach"></div>
+    <button class="btn go" id="statsclose" style="background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0">CLOSE ▶</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="overlay hidden" id="settings">
+  <div class="card">
+    <h1 style="font-size:24px">Settings</h1>
+    <div class="sub">Preferences are saved on this device</div>
+    <div class="setrow"><span class="sl">Sound effects</span><button class="toggle" id="setSound">ON</button></div>
+    <div class="setrow"><span class="sl">High-contrast colours<br><span style="font-size:10px;color:var(--ink-dim)">Brighter palette, easier to read</span></span><button class="toggle" id="setHC">OFF</button></div>
+    <div class="setrow"><span class="sl">Replay tutorial<br><span style="font-size:10px;color:var(--ink-dim)">Show the guided intro on your next new shift</span></span><button class="toggle" id="setTut">SHOW</button></div>
+    <button class="btn go" id="setclose" style="background:linear-gradient(180deg,#1d5a8c,#123a5c);border-color:#3a8ad0">CLOSE ▶</button>
+  </div>
+</div>
+
+<!-- TUTORIAL COACHMARK -->
+<div id="coach" style="display:none">
+  <div class="ct" id="coachT"></div>
+  <div class="cb" id="coachB"></div>
+  <div class="cx"><span class="cstep" id="coachS"></span><button class="cnext" id="coachN">Got it ▶</button></div>
 </div>
 
 <!-- GAME OVER -->
@@ -401,6 +488,47 @@ function sGet(k){ try{return localStorage.getItem(k);}catch(e){return _mem[k]??n
 function sSet(k,v){ try{localStorage.setItem(k,v);}catch(e){_mem[k]=v;} }
 function sDel(k){ try{localStorage.removeItem(k);}catch(e){delete _mem[k];} }
 
+/* ---------- lifetime stats ---------- */
+const STATS_KEY="approach_stats_v1";
+const STATS_DEFAULT={games:0,wins:0,landings:0,departures:0,emergencies:0,clutch:0,crashes:0,bestRankLevel:0,stars:0};
+function getStats(){ try{ return Object.assign({},STATS_DEFAULT,JSON.parse(sGet(STATS_KEY))||{}); }catch(e){ return Object.assign({},STATS_DEFAULT); } }
+function setStats(s){ sSet(STATS_KEY, JSON.stringify(s)); }
+function bumpStat(k,n){ const s=getStats(); s[k]=(s[k]||0)+(n||1); setStats(s); }
+
+/* ---------- achievements ---------- */
+const ACH_KEY="approach_ach_v1";
+const ACHIEVEMENTS=[
+  {id:"first_land",  name:"First Contact",          desc:"Land your first aircraft."},
+  {id:"clutch5",     name:"Nerves of Steel",        desc:"Pull off 5 last-second (1-fuel) landings."},
+  {id:"emerg10",     name:"Crisis Manager",         desc:"Resolve 10 emergency arrivals."},
+  {id:"land250",     name:"Seasoned Controller",    desc:"Land 250 aircraft (lifetime)."},
+  {id:"land1000",    name:"Veteran of the Tower",   desc:"Land 1000 aircraft (lifetime)."},
+  {id:"build_out",   name:"Master Builder",         desc:"Open all four runways in one shift."},
+  {id:"no_strike8",  name:"Clean Sheet",            desc:"Reach level 8 without losing a strike."},
+  {id:"air_marshal", name:"Air Marshal",            desc:"Retire at the summit — complete all 16 levels."},
+  {id:"legacy",      name:"Beyond the Summit",      desc:"Reach level 20 on a Legacy Shift."},
+];
+function getAch(){ try{ return JSON.parse(sGet(ACH_KEY))||{}; }catch(e){ return {}; } }
+function hasAch(id){ return !!getAch()[id]; }
+function unlockAch(id){
+  const a=getAch(); if(a[id]) return false;
+  a[id]=Date.now(); sSet(ACH_KEY, JSON.stringify(a));
+  const def=ACHIEVEMENTS.find(x=>x.id===id);
+  if(def) achievementToast(def);
+  return true;
+}
+
+/* ---------- settings ---------- */
+const SETTINGS_KEY="approach_settings_v1";
+let settings={sound:true, highContrast:false};
+function loadSettings(){ try{ settings=Object.assign(settings, JSON.parse(sGet(SETTINGS_KEY))||{}); }catch(e){} }
+function saveSettings(){ sSet(SETTINGS_KEY, JSON.stringify(settings)); }
+function applySettings(){
+  soundOn=settings.sound;
+  document.body.classList.toggle("hc", !!settings.highContrast);
+  const sb=$("#sound"); if(sb) sb.textContent=soundOn?"🔊":"🔇";
+}
+
 function saveGame(){
   if(!G||G.over) return;
   try{
@@ -439,6 +567,23 @@ function loadGame(){
 }
 function flashSaved(){ const el=$("#saved"); if(!el) return; el.classList.add("on"); clearTimeout(flashSaved._t); flashSaved._t=setTimeout(()=>el.classList.remove("on"),1100); }
 
+function achievementToast(def){
+  sfx.achieve();
+  const host=$("#toasts"); if(!host) return;
+  const el=document.createElement("div"); el.className="toast";
+  el.innerHTML=`<div class="tmedal">🏅</div><div><div class="tt">Achievement unlocked</div><div class="tn">${def.name}</div><div class="td">${def.desc}</div></div>`;
+  host.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add("show"));
+  setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=>el.remove(),400); }, 4200);
+}
+// warn (once) when an arrival slips into critical fuel
+function checkCriticalFuel(){
+  if(!G||!G.crit) return;
+  let newCrit=false;
+  G.planes.forEach(p=>{ if(p.kind==="ARR"){ if(p.fuel<=2 && !G.crit[p.id]){ G.crit[p.id]=true; newCrit=true; } } });
+  if(newCrit) sfx.warn();
+}
+
 
 /* ---------- audio (subtle) ---------- */
 let actx=null, soundOn=true;
@@ -459,6 +604,9 @@ const sfx={click:()=>beep(520,.05,"square",.04),assign:()=>beep(720,.07,"triangl
   land:()=>{beep(660,.08,"sine",.06);setTimeout(()=>beep(880,.12,"sine",.06),80);},
   dep:()=>{beep(440,.1,"sawtooth",.04);},
   alarm:()=>{beep(220,.25,"square",.07);},
+  warn:()=>{beep(330,.14,"triangle",.05);},
+  clutch:()=>{[784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.1,"sine",.06),i*70));},
+  achieve:()=>{[659,988,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.13,"triangle",.06),i*90));},
   level:()=>{[523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,.16,"triangle",.06),i*120));}};
 
 /* ---------- runway layout (viewBox 1000x640) ----------
@@ -526,7 +674,9 @@ function fresh(){
   RWY.forEach((r,i)=>{ r.closedFor=0; r.wakeFor=0; r.open=(r.id==="A"); r.long=r.baseLong; });
   G={level:1,turn:1,score:0,strikes:3,maxStrikes:3,opsLevel:0,opsTarget:6,
      handled:0,clockMin:6*60,planes:[],sel:null,busy:false,over:false,seq:1,log:[],
-     money:150, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0, restores:0}, incidents:[], endless:false};
+     money:150, up:{rapidExit:0, ils:false, terminal:0, slots:0, revenue:0, catiii:false, hangar:0, restores:0},
+     incidents:[], endless:false, clutch:0, lostStrike:false, crit:{}};
+  bumpStat("games");
   // seed
   G.planes.push(mkPlane("ARR",{fuel:9}));
   G.planes.push(mkPlane("DEP",{}));
@@ -751,7 +901,7 @@ function execute(){
   if(G.busy||G.over)return;
   G.busy=true; $("#exec").disabled=true; G.sel=null;
   // resolve assignments
-  let any=false;
+  let any=false, clutchThisTurn=false;
   const wakeToApply=[];          // apply wake AFTER all clearances, so a landing can't block its sibling this turn
   G.planes.forEach(p=>{
     if(!p.assigned)return;
@@ -767,12 +917,23 @@ function execute(){
     if(p.kind==="ARR") pts += p.fuel*2;            // small bonus for landing with fuel to spare
     if(p.kind==="DEP") pts -= Math.min(p.waited*4,28);
     if(p.emerg) pts += 110;
+    // CLUTCH: landing an arrival on its very last turn of fuel
+    const clutch = (p.kind==="ARR" && p.fuel<=1);
+    if(clutch){ pts += 60; clutchThisTurn=true; G.clutch=(G.clutch||0)+1;
+      logmsg("ok","✦ CLUTCH! "+p.callsign+" landed on fumes (+$60)");
+      bumpStat("clutch"); if(getStats().clutch>=5) unlockAch("clutch5"); }
     pts=Math.max(5,pts);
     earn(pts);
+    // lifetime stats + event achievements
+    if(p.kind==="ARR"){ bumpStat("landings"); unlockAch("first_land"); }
+    else bumpStat("departures");
+    if(p.emerg){ bumpStat("emergencies"); if(getStats().emergencies>=10) unlockAch("emerg10"); }
+    const lt=getStats().landings; if(lt>=250) unlockAch("land250"); if(lt>=1000) unlockAch("land1000");
     G.opsLevel++; G.handled++;
   });
   wakeToApply.forEach(([r,w])=>{ r.wakeFor=Math.max(r.wakeFor||0, w); });
-  if(any){ sfx.land(); } 
+  if(any){ clutchThisTurn ? sfx.clutch() : sfx.land(); }
+  if(openRunways().length>=4) unlockAch("build_out");
   renderMarkers(); // glide cleared planes to runway
   setTimeout(finalize, 760);
 }
@@ -787,7 +948,7 @@ function finalize(){
     else p.waited++;
   });
   crashed.forEach(p=>{
-    G.score=Math.max(0,G.score-200); G.strikes--;
+    G.score=Math.max(0,G.score-200); G.strikes--; G.lostStrike=true; bumpStat("crashes");
     if(!G.incidents) G.incidents=[];
     G.incidents.push({callsign:p.callsign, turn:G.turn, type:p.type});
     logmsg("bad","✖ "+p.callsign+" FUEL EXHAUSTED — emergency landing failed");
@@ -821,11 +982,14 @@ function finalize(){
     if(!G.endless && G.level>=MAX_LEVEL){ G.over=true; clearSave(); render(); return victory(); }
     G.level++; earn(200); G.opsLevel=0; G.opsTarget=6+(G.level-1)*2;
     logmsg("sys","▲ PROMOTED to "+rankFor(G.level)+" — Level "+G.level+" (+$200)"); sfx.level();
+    { const s=getStats(); if(G.level>(s.bestRankLevel||0)){ s.bestRankLevel=G.level; setStats(s); } }
+    if(G.level>=8 && !G.lostStrike) unlockAch("no_strike8");
+    if(G.endless && G.level>=20) unlockAch("legacy");
   }
   // game over?
   if(G.strikes<=0){ G.over=true; clearSave(); render(); return gameOver("strikes"); }
   saveGame();                                  // autosave checkpoint each completed turn
-  G.busy=false; $("#exec").disabled=false; render();
+  G.busy=false; $("#exec").disabled=false; checkCriticalFuel(); render();
 }
 
 function spawn(cfg){
@@ -1089,6 +1253,7 @@ function renderMarkers(){
     if(p.id===G.sel) cls+=" sel";
     if(p.assigned) cls+=" assigned";
     if(p.kind==="ARR"&&p.fuel<=3&&!p.emerg) cls+=" lowfuel";
+    if(p.kind==="ARR"&&p.fuel<=2) cls+=" crit";
     if(p.status==="cleared") cls+=" cleared";
     el.className=cls;
     const tag = p.kind==="ARR"
@@ -1204,7 +1369,9 @@ function gameOver(reason){
     box.className="incidents";
     box.innerHTML=`<div class="ih">Strikes charged this shift (${n})</div>${rows}`;
   } else { box.className=""; box.innerHTML=""; }
-  G._retired=false; showBestLine(updateBest());
+  G._retired=false; const stg=shiftStars(); recordStars(stg);
+  $("#oversub").innerHTML="Three strikes — airspace control relinquished &nbsp; "+starsHTML(stg);
+  showBestLine(updateBest());
   $("#contendless").style.display="none";
   $("#over").classList.remove("hidden");
   sfx.alarm();
@@ -1213,6 +1380,7 @@ function gameOver(reason){
 // Honourable retirement at the summit — a win.
 function victory(){
   G._retired=true;
+  bumpStat("wins"); unlockAch("air_marshal");
   $("#ovscore").textContent=G.score;
   $("#ovlevel").textContent=G.level;
   $("#ovhandled").textContent=G.handled;
@@ -1231,23 +1399,32 @@ function victory(){
       + G.incidents.map((x,i)=>`<div class="ir">${i+1}. <b>${x.callsign}</b>${x.type?(" ("+x.type+")"):""} — turn ${x.turn}</div>`).join("")
       : "";
   showBestLine(updateBest());
+  { const stg=shiftStars(); recordStars(stg); $("#oversub").innerHTML="Career complete — the summit of the tower &nbsp; "+starsHTML(stg); }
   $("#contendless").style.display="block";
   $("#over").classList.remove("hidden");
   sfx.level();
 }
 
-function showBestLine(isNew){
-  const b=getBest(); const el=$("#overbest");
+function showBestLine(isNew){  const b=getBest(); const el=$("#overbest");
   if(!b){ el.textContent=""; return; }
   el.innerHTML = isNew ? `<span class="new">★ NEW BEST SCORE · ${b.score}</span>`
                        : `Best score: ${b.score} (${b.rank})`;
 }
+// 1–3 star rating for the shift: progress + clean play
+function shiftStars(){
+  let s=1;
+  if(G._retired || G.level>=12) s++;          // reached/near the summit
+  if(!G.lostStrike || G._retired) s++;        // finished without losing a strike (or retired in honour)
+  return Math.max(1,Math.min(3,s));
+}
+function starsHTML(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n?'<span>★</span>':'<span class="off">★</span>'; return `<span class="stars">${h}</span>`; }
+function recordStars(n){ const st=getStats(); st.stars=(st.stars||0)+n; setStats(st); }
 
 /* ---------- boot ---------- */
 function startNew(){ clearSave(); fresh(); $("#intro").classList.add("hidden"); $("#over").classList.add("hidden");
-  $("#exec").disabled=false; render(); }
+  $("#exec").disabled=false; render(); maybeTutorial(); }
 function resumeGame(){ if(!loadGame()){ startNew(); return; } $("#intro").classList.add("hidden"); $("#over").classList.add("hidden");
-  $("#exec").disabled=false; render(); }
+  $("#exec").disabled=false; const c=$("#coach"); if(c)c.style.display="none"; render(); }
 function refreshIntroButtons(){
   const has=hasSave();
   $("#resumebtn").style.display = has ? "block" : "none";
@@ -1280,8 +1457,66 @@ $("#contendless").onclick=()=>{   // continue past the summit for score (Legacy 
 };
 $("#exec").onclick=execute;
 $("#help").onclick=()=>{ refreshIntroButtons(); $("#intro").classList.remove("hidden"); };
-$("#sound").onclick=()=>{ soundOn=!soundOn; $("#sound").textContent=soundOn?"🔊":"🔇"; if(soundOn)sfx.click(); };
+$("#sound").onclick=()=>{ settings.sound=!settings.sound; saveSettings(); applySettings(); if(settings.sound)sfx.click(); };
+
+/* ---------- career stats screen ---------- */
+function renderStats(){
+  const s=getStats(), best=getBest();
+  $("#statsbest").textContent = best ? ("Best score "+best.score+" · "+best.rank+(best.retired?" (retired)":"")) : "No completed shifts yet";
+  const cells=[
+    ["Shifts played",s.games],["Shifts won",s.wins],
+    ["Aircraft landed",s.landings],["Departures",s.departures],
+    ["Emergencies resolved",s.emergencies],["Clutch landings",s.clutch],
+    ["Highest level",s.bestRankLevel||1],["Incidents (crashes)",s.crashes],
+  ];
+  $("#statsgrid").innerHTML=cells.map(c=>`<div class="statcell"><div class="sv">${c[1]}</div><div class="sk">${c[0]}</div></div>`).join("");
+  const ach=getAch();
+  $("#statsach").innerHTML=ACHIEVEMENTS.map(a=>{
+    const got=!!ach[a.id];
+    return `<div class="achrow ${got?"":"locked"}"><div class="am">${got?"🏅":"🔒"}</div><div><div class="an">${a.name}</div><div class="ad">${a.desc}</div></div></div>`;
+  }).join("");
+}
+function openStats(){ renderStats(); $("#stats").classList.remove("hidden"); }
+$("#statslink").onclick=openStats;
+$("#achlink").onclick=openStats;
+$("#statsclose").onclick=()=>$("#stats").classList.add("hidden");
+
+/* ---------- settings screen ---------- */
+function syncToggle(el,on){ el.textContent=on?"ON":"OFF"; el.classList.toggle("off",!on); }
+function renderSettings(){ syncToggle($("#setSound"),settings.sound); syncToggle($("#setHC"),settings.highContrast); }
+function openSettings(){ renderSettings(); $("#settings").classList.remove("hidden"); }
+$("#setlink").onclick=openSettings;
+$("#setclose").onclick=()=>$("#settings").classList.add("hidden");
+$("#setSound").onclick=()=>{ settings.sound=!settings.sound; saveSettings(); applySettings(); renderSettings(); if(settings.sound)sfx.click(); };
+$("#setHC").onclick=()=>{ settings.highContrast=!settings.highContrast; saveSettings(); applySettings(); renderSettings(); };
+$("#setTut").onclick=()=>{ sDel("approach_tut_done"); $("#setTut").textContent="WILL SHOW ✓"; };
+
+/* ---------- guided tutorial (first new shift only) ---------- */
+const TUT_KEY="approach_tut_done";
+const COACH=[
+  {t:"Welcome to the tower",b:"Aircraft arrive low on fuel and departures wait at the gate. Each turn you assign them to runways, then advance the clock."},
+  {t:"Pick a flight, pick a runway",b:"Tap a flight strip on the right to select it, then tap a runway button to clear it for that runway. Watch the fuel gauge — arrivals must land before it hits zero."},
+  {t:"One runway, for now",b:"You start with a single runway. Every operation earns funds — tap ✦ BUILD to open more runways and upgrade the airport as traffic grows."},
+  {t:"Advance the turn",b:"When you've assigned what you can, press EXECUTE TURN. Clear all 16 levels to retire as Air Marshal. Good luck, Controller."},
+];
+let coachIdx=0;
+function startTutorial(){ coachIdx=0; showCoach(); }
+function showCoach(){
+  const c=COACH[coachIdx]; const box=$("#coach");
+  if(!c){ box.style.display="none"; sSet(TUT_KEY,"1"); return; }
+  $("#coachT").textContent=c.t; $("#coachB").textContent=c.b;
+  $("#coachS").textContent=(coachIdx+1)+" / "+COACH.length;
+  $("#coachN").textContent = coachIdx===COACH.length-1 ? "Start ▶" : "Next ▶";
+  // position near bottom-centre (above the execute button), safe on mobile
+  box.style.display="block";
+  box.style.left="50%"; box.style.transform="translateX(-50%)";
+  box.style.bottom="90px"; box.style.top="auto";
+}
+$("#coachN").onclick=()=>{ coachIdx++; showCoach(); };
+function maybeTutorial(){ if(!sGet(TUT_KEY)) startTutorial(); }
+
 refreshIntroButtons();
+loadSettings(); applySettings();
 // allow execute via space / enter
 window.addEventListener("keydown",e=>{ if((e.code==="Space"||e.code==="Enter")&&!$("#intro").matches(":not(.hidden)")&&!G.over){e.preventDefault();execute();} });
 // iOS: block pinch-zoom and double-tap-zoom (some Safari versions ignore user-scalable=no)
